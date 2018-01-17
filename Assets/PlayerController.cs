@@ -169,7 +169,7 @@ public class PlayerController : MonoBehaviour
 				Shimmy(HangInfo.Direction.Right);
 			}
 
-			if (_isHanging)
+			if (leftUp)
 			{
 				Shimmy(HangInfo.Direction.Left);
 			}
