@@ -61,11 +61,13 @@ public class PlayerController : MonoBehaviour
 	[Header("Speeds")]
 	public float walkSpeed;
 	public float jogSpeed;
+	public Rigidbody _rigidbody;
 
 	// Use this for initialization
 	void Start ()
 	{
 		_controller = GetComponent<CharacterAnimationController>();
+		_rigidbody = GetComponent<Rigidbody>();
 		_hang = new HangInfo();
 	}
 
@@ -80,7 +82,7 @@ public class PlayerController : MonoBehaviour
 	}
 
 	// Update is called once per frame
-	void Update()
+	void FixedUpdate()
 	{
 		_pointSqrDistanceThreshold = _pointDistanceThreshold * _pointDistanceThreshold;
 		_closestPoint = GetClosestPoint();
@@ -118,8 +120,8 @@ public class PlayerController : MonoBehaviour
 		// State transition conditions
 		bool canJump = _isGrounded && !_isCrouching;
 		bool canCrouch = _isGrounded;
-		bool canWalk = _isGrounded && !_isJumping;
-		bool canJog = _isGrounded && !_isCrouching && !_isJumping;
+		bool canWalk = /*_isGrounded && */!_isJumping;
+		bool canJog = /*_isGrounded && */!_isCrouching && !_isJumping;
 		bool canHang = _isGrounded && _closestPoint != null && !_isCrouching && !_isJumping;
 		// If the point requires the player to be facing a certain way, then we add the condition
 		if (canHang && _closestPoint.HasNormal)
@@ -213,83 +215,7 @@ public class PlayerController : MonoBehaviour
 //				}
 //			}
 //		}
-//		if (rightUp)
-//		{
-//			if (_isHanging)
-//			{
-//				if (_hang.state == HangInfo.HangState.Final)
-//				{
-//					_hang.nextPoint = _hang.currentPoint.GetNextPoint(transform.right);
-//					if (_hang.nextPoint)
-//					{
-//						_hang.currentDirection = HangInfo.Direction.Right;
-//						_controller.rightHandIK = _hang.nextPoint.transform;
-//						transform.position = Vector3.Lerp(
-//							_hang.currentPoint.characterShouldBe.position,
-//							_hang.nextPoint.characterShouldBe.position, 0.5f);
-//						_hang.state = HangInfo.HangState.Midpoint;
-//						_controller.isShimmyRight = true;
-//					}
-//				}
-//				else if (_hang.state == HangInfo.HangState.Midpoint)
-//				{
-//					if (_hang.currentDirection == HangInfo.Direction.Right)
-//					{
-//						_hang.currentPoint = _hang.nextPoint;
-//					}
-//					else if (_hang.currentDirection == HangInfo.Direction.Left)
-//					{
-//						_hang.nextPoint = _hang.currentPoint;
 //
-//					}
-//
-//					_controller.isShimmyRight = true;
-//					_hang.nextPoint = null;
-//					_controller.leftHandIK = _hang.currentPoint.transform;
-//					transform.position = _hang.currentPoint.characterShouldBe.transform.position;
-//					_hang.state = HangInfo.HangState.Final;
-//				}
-//			}
-//		}
-//		if (leftUp)
-//		{
-//			if (_isHanging)
-//			{
-//				if (_hang.state == HangInfo.HangState.Final)
-//				{
-//					_hang.nextPoint = _hang.currentPoint.GetNextPoint(-transform.right);
-//					if (_hang.nextPoint)
-//					{
-//						_hang.currentDirection = HangInfo.Direction.Left;
-//						_controller.leftHandIK = _hang.nextPoint.transform;
-//						transform.position = Vector3.Lerp(
-//							_hang.currentPoint.characterShouldBe.position,
-//							_hang.nextPoint.characterShouldBe.position, 0.5f);
-//						_hang.state = HangInfo.HangState.Midpoint;
-//						_controller.isShimmyLeft = true;
-//					}
-//
-//				}
-//				else if (_hang.state == HangInfo.HangState.Midpoint)
-//				{
-//					if (_hang.currentDirection == HangInfo.Direction.Left)
-//					{
-//						_hang.currentPoint = _hang.nextPoint;
-//					}
-//					else if(_hang.currentDirection == HangInfo.Direction.Right)
-//					{
-//						_hang.nextPoint = _hang.currentPoint;
-//					}
-//					_controller.isShimmyLeft = true;
-//					_hang.currentPoint = _hang.nextPoint;
-//					_hang.nextPoint = null;
-//					_controller.rightHandIK = _hang.currentPoint.transform;
-//					transform.position = _hang.currentPoint.characterShouldBe.transform.position;
-//					_hang.state = HangInfo.HangState.Final;
-//
-//				}
-//			}
-//		}
 
 		var forward = inputVector;
 		if (forward.sqrMagnitude > 1)
@@ -313,11 +239,15 @@ public class PlayerController : MonoBehaviour
 			}
 		}
 		_controller.currentSpeed = speed;
-		if (!_isHanging)
+		if (!_isHanging && _isGrounded)
 		{
-			transform.LookAt(transform.position + forward, Vector3.up);
-			var velocity = forward * speed * Time.deltaTime;
-			transform.position += velocity;
+//			transform.LookAt(transform.position + forward, Vector3.up);
+			var oldVelocity = _rigidbody.velocity;
+			oldVelocity = forward * speed;
+			oldVelocity.y = _rigidbody.velocity.y;
+			transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
+			_rigidbody.velocity = oldVelocity;
+//			_rigidbody.AddForce(forward * speed * Time.deltaTime);
 		}
 
 		SetAnimationControllerStates();
@@ -328,6 +258,7 @@ public class PlayerController : MonoBehaviour
 	{
 		Debug.Log("Started Hanging");
 		_isHanging = true;
+		_rigidbody.isKinematic = true;
 		_hang.state = HangInfo.HangState.Final;
 		_hang.currentPoint = point;
 		_controller.hangType = _hang.currentPoint.hangType;
@@ -341,6 +272,7 @@ public class PlayerController : MonoBehaviour
 	{
 		Debug.Log("Stopped Hanging");
 		_isHanging = false;
+		_rigidbody.isKinematic = false;
 		_hang.currentPoint = null;
 		_hang.currentDirection = HangInfo.Direction.None;
 	}
