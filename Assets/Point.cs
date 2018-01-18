@@ -84,24 +84,23 @@ public class Point : MonoBehaviour
 		_neighbourPoints.Clear();
 	}
 
-	private void DiscoverNeighbours()
+	public void DiscoverNeighbours()
 	{
 		visited = true;
-		var allPoints = _pointsList.GetComponentsInChildren<Point>()
+		var points = _pointsList.GetComponentsInChildren<Point>()
 			// Get all points
 			// 1) that different than this one,
 			// 2) to whom this point is not connected
 			// 3) that are not connected to me
-			.Where(point => point != this);
-		//  && !IsConnected(point) && !point.IsConnected(this)
-		// Calculate the distance of each point and "attach" this information to a dictionary
-		// in which
-		// Key: the points themselves
-		// Value: The distance to this point
-		var dictionary = allPoints.ToDictionary(
-			point => point,
-			point => (point.transform.position - transform.position).sqrMagnitude);
-		var points = dictionary
+			.Where(point => point != this)
+			//  && !IsConnected(point) && !point.IsConnected(this)
+			// Calculate the distance of each point and "attach" this information to a dictionary
+			// in which
+			// Key: the points themselves
+			// Value: The distance to this point
+			.ToDictionary(
+				point => point,
+				point => (point.transform.position - transform.position).sqrMagnitude)
 			// Keep only the points close enough
 			.Where(pair => pair.Value <= _discoverSqrDistance)
 			// Order the points by increasing distance

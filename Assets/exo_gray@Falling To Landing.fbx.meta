@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 4bc32cf3abbd9714fbfe5f8250d20402
-timeCreated: 1516136854
+guid: 42c1d80a0e44e9449bb361f330e83fe3
+timeCreated: 1516290090
 licenseType: Free
 ModelImporter:
   serializedVersion: 21
@@ -233,7 +233,7 @@ ModelImporter:
     400222: TongueBack
     400224: TongueMid
     400226: TongueTip
-    7400000: Jumping
+    7400000: Falling To Landing
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -260,10 +260,10 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Jumping
+      name: Falling To Landing
       takeName: mixamo.com
       firstFrame: 0
-      lastFrame: 57
+      lastFrame: 32
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -275,38 +275,14 @@ ModelImporter:
       loopBlendOrientation: 1
       loopBlendPositionY: 0
       loopBlendPositionXZ: 1
-      keepOriginalOrientation: 1
+      keepOriginalOrientation: 0
       keepOriginalPositionY: 0
       keepOriginalPositionXZ: 0
       heightFromFeet: 1
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events:
-      - time: 0.25101212
-        functionName: OnActualJumpStart
-        data: 
-        objectReferenceParameter: {fileID: 11500000, guid: 84c4f27738bd2b448b16061ff423212c,
-          type: 3}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: 0.58422935
-        functionName: OnActualJumpLand
-        data: 
-        objectReferenceParameter: {fileID: 11500000, guid: 84c4f27738bd2b448b16061ff423212c,
-          type: 3}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: 0.7369002
-        functionName: OnActualJumpEnd
-        data: 
-        objectReferenceParameter: {fileID: 11500000, guid: 84c4f27738bd2b448b16061ff423212c,
-          type: 3}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
+      events: []
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}

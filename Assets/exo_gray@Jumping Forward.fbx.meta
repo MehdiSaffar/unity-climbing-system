@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 4bc32cf3abbd9714fbfe5f8250d20402
-timeCreated: 1516136854
+guid: f5737ee5ab10f79449f1d0e9d35eb819
+timeCreated: 1516300835
 licenseType: Free
 ModelImporter:
   serializedVersion: 21
@@ -233,7 +233,7 @@ ModelImporter:
     400222: TongueBack
     400224: TongueMid
     400226: TongueTip
-    7400000: Jumping
+    7400000: Jumping Forward
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -260,10 +260,10 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Jumping
+      name: Jumping Forward
       takeName: mixamo.com
       firstFrame: 0
-      lastFrame: 57
+      lastFrame: 30
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -274,7 +274,7 @@ ModelImporter:
       loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 0
-      loopBlendPositionXZ: 1
+      loopBlendPositionXZ: 0
       keepOriginalOrientation: 1
       keepOriginalPositionY: 0
       keepOriginalPositionXZ: 0
@@ -283,24 +283,8 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.25101212
+      - time: 0.028673835
         functionName: OnActualJumpStart
-        data: 
-        objectReferenceParameter: {fileID: 11500000, guid: 84c4f27738bd2b448b16061ff423212c,
-          type: 3}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: 0.58422935
-        functionName: OnActualJumpLand
-        data: 
-        objectReferenceParameter: {fileID: 11500000, guid: 84c4f27738bd2b448b16061ff423212c,
-          type: 3}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: 0.7369002
-        functionName: OnActualJumpEnd
         data: 
         objectReferenceParameter: {fileID: 11500000, guid: 84c4f27738bd2b448b16061ff423212c,
           type: 3}
