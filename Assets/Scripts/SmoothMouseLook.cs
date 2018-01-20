@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class SmoothMouseLook : MonoBehaviour
+public class SmoothMouseLook : MyMonoBehaviour
 {
     public Transform CameraTarget;
     private float x;

@@ -112,10 +112,6 @@ NavMeshSettings:
 Transform:
   m_PrefabParentObject: {fileID: 400226, guid: 22fb9c27b13e1d140982c94ed498997f, type: 3}
   m_PrefabInternal: {fileID: 1897337111}
---- !u!4 &422745359 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400026, guid: 22fb9c27b13e1d140982c94ed498997f, type: 3}
-  m_PrefabInternal: {fileID: 1897337111}
 --- !u!1 &431560883
 GameObject:
   m_ObjectHideFlags: 0
@@ -287,10 +283,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &545651446 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400084, guid: 22fb9c27b13e1d140982c94ed498997f, type: 3}
-  m_PrefabInternal: {fileID: 1897337111}
 --- !u!1 &579009960 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 100012, guid: 22fb9c27b13e1d140982c94ed498997f, type: 3}
@@ -310,6 +302,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84c4f27738bd2b448b16061ff423212c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
   _hang:
     state: 0
     currentDirection: 0
@@ -319,8 +320,6 @@ MonoBehaviour:
   rightVectorLength: 1
   forwardVectorLength: 1
   _downRayLength: 1.2
-  rightHand: {fileID: 1135626574}
-  leftHand: {fileID: 545651446}
   rightFoot: {fileID: 168851166}
   leftFoot: {fileID: 1532823999}
   _pointDistanceThreshold: 133.89
@@ -332,12 +331,14 @@ MonoBehaviour:
   _isHanging: 0
   _isLandingFromJumping: 0
   _isFalling: 0
+  _isClimbing: 0
   _wasJumping: 0
   _wasMidair: 0
   _wasGrounded: 0
   _wasCrouching: 0
   _wasHanging: 0
   _wasFalling: 0
+  _wasClimbing: 0
   currentVelocityY: 0
   walkSpeed: 1.55
   jogSpeed: 3
@@ -354,20 +355,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 446b0d6fbdbd5e64e881ce9d634aa17d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hips: {fileID: 422745359}
-  rightFoot: {fileID: 168851166}
-  leftFoot: {fileID: 1532823999}
-  rightHand: {fileID: 1135626574}
-  leftHand: {fileID: 545651446}
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  animator: {fileID: 0}
   rightHandIK: {fileID: 0}
   leftHandIK: {fileID: 0}
   isHanging: 0
+  hangType: 0
   currentSpeed: 0
   jogSpeed: 0
   walkSpeed: 0
-  isShimmyRight: 0
   isShimmyLeft: 0
-  hangType: 0
 --- !u!136 &579009965
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -563,10 +568,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!4 &1135626574 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400188, guid: 22fb9c27b13e1d140982c94ed498997f, type: 3}
-  m_PrefabInternal: {fileID: 1897337111}
 --- !u!4 &1222666693 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4956468756420104, guid: 8c00c1481cacb014680f0d756b99a9ec,
@@ -700,6 +701,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cfb432e838f1654abb348a95158571f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
 --- !u!1 &1485432838
 GameObject:
   m_ObjectHideFlags: 0
@@ -1203,6 +1213,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8221ac2e32fb68479ab3f553ad5749c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
   CameraTarget: {fileID: 0}
   MaxViewDistance: 15
   MinViewDistance: 1
@@ -1219,4 +1238,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f715b6fb955032141bf932e3c2cb6d4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
   mTarget: {fileID: 579009962}
