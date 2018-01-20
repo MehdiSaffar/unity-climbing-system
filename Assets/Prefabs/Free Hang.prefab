@@ -104,8 +104,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1589951829316248}
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 4.881, y: -0.39899993, z: 0.726}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4760128033025282}
@@ -113,7 +113,7 @@ Transform:
   - {fileID: 4082138333734856}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4760128033025282
 Transform:
   m_ObjectHideFlags: 1
@@ -138,15 +138,68 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5a6286213717b9488202ad257528419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects:
+    - {fileID: 4007724482519934}
+    - {fileID: 4082138333734856}
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: ik
+      Entry: 7
+      Data: 0|IKPositions, Assembly-CSharp
+    - Name: head
+      Entry: 6
+      Data: 
+    - Name: rightHand
+      Entry: 7
+      Data: 1|IKTarget, Assembly-CSharp
+    - Name: transform
+      Entry: 10
+      Data: 0
+    - Name: weight
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: leftHand
+      Entry: 7
+      Data: 2|IKTarget, Assembly-CSharp
+    - Name: transform
+      Entry: 10
+      Data: 1
+    - Name: weight
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: hips
+      Entry: 6
+      Data: 
+    - Name: rightFoot
+      Entry: 6
+      Data: 
+    - Name: leftFoot
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: neighbours
+      Entry: 6
+      Data: 
   _pointsList: {fileID: 0}
-  characterRoot: {fileID: 4760128033025282}
-  rightHand: {fileID: 4007724482519934}
-  leftHand: {fileID: 4082138333734856}
-  _discoverDistance: 1
-  _gizmoSize: 0.1
   _isRoot: 0
-  _neighbourPoints: []
-  displayRange: 0
   hangType: 1
-  visited: 0
-  wallNormalRayLength: 1
+  characterRoot: {fileID: 4760128033025282}
+  _discoverDistance: 1
+  DirectionDotProductThresholdValue: 0.8
+  _gizmoCubeSize: 0.1
+  shouldDisplayRange: 0
+  normalRayLength: 1

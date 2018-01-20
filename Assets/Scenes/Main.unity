@@ -197,6 +197,28 @@ Prefab:
       propertyPath: pointsCount
       value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 114302087481242432, guid: 8c00c1481cacb014680f0d756b99a9ec,
+        type: 2}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 114302087481242432, guid: 8c00c1481cacb014680f0d756b99a9ec,
+        type: 2}
+    - target: {fileID: 114302087481242432, guid: 8c00c1481cacb014680f0d756b99a9ec,
+        type: 2}
+      propertyPath: cubeLength
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114584310750863514, guid: 8c00c1481cacb014680f0d756b99a9ec,
+        type: 2}
+      propertyPath: serializationData.Prefab
+      value: 
+      objectReference: {fileID: 114584310750863514, guid: 8c00c1481cacb014680f0d756b99a9ec,
+        type: 2}
+    - target: {fileID: 114584310750863514, guid: 8c00c1481cacb014680f0d756b99a9ec,
+        type: 2}
+      propertyPath: cubeLength
+      value: 0.1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8c00c1481cacb014680f0d756b99a9ec, type: 2}
   m_IsPrefabParent: 0
@@ -311,25 +333,25 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
+  pointList: {fileID: 1359918809}
   _hang:
     state: 0
     currentDirection: 0
     currentPoint: {fileID: 0}
     nextPoint: {fileID: 0}
-  pointList: {fileID: 1359918809}
-  rightVectorLength: 1
-  forwardVectorLength: 1
-  _downRayLength: 1.2
+  rightRayLength: 1
+  forwardRayLength: 1
+  downRayLength: 1.2
   rightFoot: {fileID: 168851166}
   leftFoot: {fileID: 1532823999}
-  _pointDistanceThreshold: 133.89
-  _groundDistanceThreshold: 0.8
+  pointDistanceThreshold: 100
+  groundDistanceThreshold: 0.3
   _isJumping: 0
   _isGrounded: 0
   _isCrouching: 0
   _isMidair: 0
   _isHanging: 0
-  _isLandingFromJumping: 0
+  _isLandingFromJump: 0
   _isFalling: 0
   _isClimbing: 0
   _wasJumping: 0
@@ -343,7 +365,7 @@ MonoBehaviour:
   walkSpeed: 1.55
   jogSpeed: 3
   jumpVelocityY: 5
-  fallVelocityThreshold: -3.9
+  fallVelocityThreshold: -4.5
 --- !u!114 &579009964
 MonoBehaviour:
   m_ObjectHideFlags: 0

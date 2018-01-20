@@ -442,6 +442,7 @@ public class PlayerController : MyMonoBehaviour
 	{
 		_isHanging = false;
 		_isClimbing = true;
+		_rigidbody.isKinematic = true;
 		_hang.currentPoint = null;
 		_hang.currentDirection = HangInfo.Direction.None;
 	}
@@ -467,8 +468,8 @@ public class PlayerController : MyMonoBehaviour
 		_hang.currentPoint = point;
 		animationController.hangType = _hang.currentPoint.hangType;
 
-		SetLeftHand(_hang.currentPoint.leftHand);
-		SetRightHand(_hang.currentPoint.rightHand);
+		SetLeftHand(_hang.currentPoint.ik.leftHand.transform);
+		SetRightHand(_hang.currentPoint.ik.rightHand.transform);
 		transform.position = _hang.currentPoint.characterRoot.transform.position;
 	}
 
@@ -606,8 +607,8 @@ public class PlayerController : MyMonoBehaviour
 				// We tell the controller how we are actually hanging to that point
 				animationController.hangType = _hang.currentPoint.hangType;
 // We set the hand IKs
-				SetRightHand(_hang.currentPoint.rightHand);
-				SetLeftHand(_hang.currentPoint.leftHand);
+				SetRightHand(_hang.currentPoint.ik.rightHand.transform);
+				SetLeftHand(_hang.currentPoint.ik.leftHand.transform);
 				// Set the transform position of the character
 //				transform.position = _hang.currentPoint.characterRoot.transform.position;
 				timeSinceShimmy = 0f;

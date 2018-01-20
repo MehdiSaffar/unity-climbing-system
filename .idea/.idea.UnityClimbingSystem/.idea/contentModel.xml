@@ -9,11 +9,6 @@
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
       <e p="Assets" t="Include">
         <e p="Plugins" t="Include">
-          <e p="Editor" t="Include">
-            <e p="JetBrains" t="Include">
-              <e p="Unity3DRider.cs" t="Include" />
-            </e>
-          </e>
           <e p="Sirenix" t="Include">
             <e p="Assemblies" t="Include">
               <e p="link.xml" t="Include" />
@@ -23,106 +18,6 @@
               <e p="Sirenix.Serialization.xml" t="Include" />
               <e p="Sirenix.Utilities.Editor.xml" t="Include" />
               <e p="Sirenix.Utilities.xml" t="Include" />
-            </e>
-            <e p="Demos" t="Include">
-              <e p="Odin Inspector" t="Include">
-                <e p="Scripts" t="Include">
-                  <e p="Attribute Examples" t="Include">
-                    <e p="AssetListExamples.cs" t="Include" />
-                    <e p="BoxGroupExamples.cs" t="Include" />
-                    <e p="ButtonAndButtonGroupExamples.cs" t="Include" />
-                    <e p="ColorPaletteExamples.cs" t="Include" />
-                    <e p="CombineGroupAttributeExample1.cs" t="Include" />
-                    <e p="CombineGroupAttributeExample2.cs" t="Include" />
-                    <e p="CombineGroupAttributeExample3.cs" t="Include" />
-                    <e p="CustomContextMenuExamples.cs" t="Include" />
-                    <e p="CustomValueDrawerExamples.cs" t="Include" />
-                    <e p="DictionaryExamples.cs" t="Include" />
-                    <e p="DisableAndDisabledIfExamples.cs" t="Include" />
-                    <e p="DisableContextMenuExamples.cs" t="Include" />
-                    <e p="DisableInEditorAndPlayModeExamples.cs" t="Include" />
-                    <e p="DisplayAsStringExamples.cs" t="Include" />
-                    <e p="EnumToggleButtonsExamples.cs" t="Include" />
-                    <e p="FilePathExamples.cs" t="Include" />
-                    <e p="FolderPathExamples.cs" t="Include" />
-                    <e p="FoldoutGroupAttributeExamples.cs" t="Include" />
-                    <e p="GUIColorExamples.cs" t="Include" />
-                    <e p="HideInEditorAndPlayModeExamples.cs" t="Include" />
-                    <e p="HideLabelExamples.cs" t="Include" />
-                    <e p="HideReferenceObjectPickerExamples.cs" t="Include" />
-                    <e p="HorizontalGroupAttributeExamples.cs" t="Include" />
-                    <e p="IncorrectUseOfOdinSerializeAttributeExamples1.cs" t="Include" />
-                    <e p="IncorrectUseOfOdinSerializeAttributeExamples2.cs" t="Include" />
-                    <e p="IndentExamples.cs" t="Include" />
-                    <e p="InfoBoxExamples.cs" t="Include" />
-                    <e p="InlineEditorExamples.cs" t="Include" />
-                    <e p="InlinePropertyExamples.cs" t="Include" />
-                    <e p="LabelTextExamples.cs" t="Include" />
-                    <e p="ListExamples.cs" t="Include" />
-                    <e p="MinMaxSliderExamples.cs" t="Include" />
-                    <e p="MinMaxValueValueExamples.cs" t="Include" />
-                    <e p="MultiLinePropertyExamples.cs" t="Include" />
-                    <e p="NoBoilerplate.cs" t="Include" />
-                    <e p="OnInspectorGUIExamples.cs" t="Include" />
-                    <e p="OnValueChangedExamples.cs" t="Include" />
-                    <e p="PrefabRelatedAttributesExamples.cs" t="Include" />
-                    <e p="ProgressBarExamples.cs" t="Include" />
-                    <e p="PropertyOrderExamples.cs" t="Include" />
-                    <e p="PropertyTooltipExamples.cs" t="Include" />
-                    <e p="QuaternionAndVectorExamples.cs" t="Include" />
-                    <e p="ReadOnlyExamples.cs" t="Include" />
-                    <e p="RequiredExamples.cs" t="Include" />
-                    <e p="SceneAndAssetsOnlyExamples.cs" t="Include" />
-                    <e p="SerializeAnything.cs" t="Include" />
-                    <e p="ShowAndHideIfExamples.cs" t="Include" />
-                    <e p="ShowInInspectorExamples.cs" t="Include" />
-                    <e p="ShowPropertiesInTheInspectorExamples.cs" t="Include" />
-                    <e p="SuffixLabelExamples.cs" t="Include" />
-                    <e p="TabExamples.cs" t="Include" />
-                    <e p="TableListExamples.cs" t="Include" />
-                    <e p="TableMatrixExamples.cs" t="Include" />
-                    <e p="TitleExamples.cs" t="Include" />
-                    <e p="TitleGroupExamples.cs" t="Include" />
-                    <e p="ToggleExamples.cs" t="Include" />
-                    <e p="ToggleLeftExamples.cs" t="Include" />
-                    <e p="ValidateInputExamples.cs" t="Include" />
-                    <e p="ValueDropdownExamples.cs" t="Include" />
-                    <e p="VerticalGroupExamples.cs" t="Include" />
-                    <e p="WrapExamples.cs" t="Include" />
-                  </e>
-                  <e p="Custom Drawer Examples" t="Include">
-                    <e p="ContextExample.cs" t="Include" />
-                    <e p="CustomDrawerExample.cs" t="Include" />
-                    <e p="CustomGroupExample.cs" t="Include" />
-                    <e p="GenericDrawerExample.cs" t="Include" />
-                    <e p="GenericMenuExample.cs" t="Include" />
-                    <e p="HealthBarExample.cs" t="Include" />
-                    <e p="MinesweeperExample.cs" t="Include" />
-                    <e p="PriorityExamples.cs" t="Include" />
-                    <e p="ReflectionExample.cs" t="Include" />
-                    <e p="StringMemberHelperExample.cs" t="Include" />
-                    <e p="ValidationExample.cs" t="Include" />
-                  </e>
-                  <e p="Object Placement Demo" t="Include">
-                    <e p="ObjectPlacementFunction.cs" t="Include" />
-                    <e p="ObjectPlacer.cs" t="Include" />
-                    <e p="PlaceableObject.cs" t="Include" />
-                    <e p="PlacementFunctions" t="Include">
-                      <e p="CirclePlacementFunction.cs" t="Include" />
-                      <e p="RandomPlacementFunction.cs" t="Include" />
-                      <e p="SineWavePlacementFunction.cs" t="Include" />
-                      <e p="SpirographPlacementFunction.cs" t="Include" />
-                    </e>
-                  </e>
-                </e>
-              </e>
-            </e>
-            <e p="Odin Inspector" t="Include">
-              <e p="Scripts" t="Include">
-                <e p="Editor" t="Include">
-                  <e p="BuildAOTAutomation.cs" t="Include" />
-                </e>
-              </e>
             </e>
             <e p="Readme.txt" t="Include" />
           </e>
@@ -176,8 +71,12 @@
           <e p="CameraFollower.cs" t="Include" />
           <e p="CharacterAnimationController.cs" t="Include" />
           <e p="GizmosUtil.cs" t="Include" />
+          <e p="IKPositions.cs" t="Include" />
+          <e p="IKTarget.cs" t="Include" />
+          <e p="MovementType.cs" t="Include" />
           <e p="MyMonoBehaviour.cs" t="Include" />
           <e p="MyStateMachineBehaviour.cs" t="Include" />
+          <e p="Neighbour.cs" t="Include" />
           <e p="PlayerController.cs" t="Include" />
           <e p="Point.cs" t="Include" />
           <e p="PointsHelperLine.cs" t="Include" />

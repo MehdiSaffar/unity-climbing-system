@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
+
 using NUnit.Framework;
 using UnityEngine;
 
@@ -25,8 +26,8 @@ public class Point : MyMonoBehaviour{
 	/// </summary>
 	[SerializeField] public Transform _pointsList;
 
+	private TextMesh _textMesh;
 	[Header("Point Characteristics")]
-
 	/// <summary>
 	/// Is the point considered root?
 	/// </summary>
@@ -43,14 +44,9 @@ public class Point : MyMonoBehaviour{
 	public Transform characterRoot;
 
 	/// <summary>
-	/// Position where the character's right hand should be at
+	/// Contains the position rotation targets of the character's body parts
 	/// </summary>
-	public Transform rightHand;
-
-	/// <summary>
-	/// Position where the character's left hand should be at
-	/// </summary>
-	public Transform leftHand;
+	public IKPositions ik;
 
 	/// <summary>
 	/// The distance within which this point can see neighbouring points
@@ -70,10 +66,10 @@ public class Point : MyMonoBehaviour{
 	/// </summary>
 	[SerializeField] private float DirectionDotProductThresholdValue = 0.8f;
 
-	[Header("Gizmo")]
 	/// <summary>
 	/// Size of the cube gizmo
 	/// </summary>
+	[Header("Gizmo")]
 	[SerializeField] private float _gizmoCubeSize;
 
 	/// <summary>
@@ -82,16 +78,20 @@ public class Point : MyMonoBehaviour{
 	[SerializeField] private bool shouldDisplayRange;
 
 	/// <summary>
+	/// Should this point display its normal vector?
+	/// </summary>
+	[SerializeField] private bool shouldDisplayNormal;
+
+	/// <summary>
 	/// Length of the normal ray
 	/// </summary>
 	[SerializeField] private float normalRayLength;
 
-	[Header("Other")]
 	/// <summary>
 	/// List of the neighbouring points to which this point is connected
 	/// </summary>
-	public List<Point> _neighbourPoints;
-
+	[Header("Other")]
+	public List<Neighbour> neighbours;
 
 	/// <summary>
 	/// Normal of the point that the character should face
@@ -113,6 +113,8 @@ public class Point : MyMonoBehaviour{
 
 	private void Awake(){
 		_discoverSqrDistance = _discoverDistance * _discoverDistance;
+		_textMesh = GetComponent<TextMesh>();
+		neighbours = new List<Neighbour>();
 		isVisited = false;
 	}
 
@@ -143,7 +145,7 @@ public class Point : MyMonoBehaviour{
 	/// </summary>
 	private void ResetNeighbours(){
 		// TODO: Probably should also make the points disconnect from this point
-		_neighbourPoints.Clear();
+		neighbours.Clear();
 	}
 
 	/// <summary>
@@ -190,40 +192,44 @@ public class Point : MyMonoBehaviour{
 	/// Adds the points in bulk to the list of neighbouring points
 	/// </summary>
 	/// <param name="points">Points to add</param>
-	private void AddNeighbours(IEnumerable<Point> points){
-		_neighbourPoints.AddRange(points);
+	private void AddNeighbours(IEnumerable<Point> points, MovementType movementType = MovementType.Regular){
+		foreach (var point in points) {
+			var neighbour = new Neighbour(this, point, movementType);
+			neighbours.Add(neighbour);
+		}
 	}
 
 	/// <summary>
 	/// Adds a point to the list of neighbouring points
 	/// </summary>
 	/// <param name="point">Point to add</param>
-	private void AddNeighbour(Point point){
-		_neighbourPoints.Add(point);
+	private void AddNeighbour(Point point, MovementType movementType = MovementType.Regular){
+		var neighbour = new Neighbour(this, point, movementType);
+		neighbours.Add(neighbour);
 	}
 
 	/// <summary>
 	/// Is <paramref name="otherPoint"/> a neighbour of this point?
 	/// </summary>
 	public bool IsConnected(Point otherPoint){
-		return _neighbourPoints.Exists(pt => otherPoint == pt);
+		return neighbours.Exists(pt => otherPoint == pt.point);
 	}
 
 	/// <summary>
 	/// Gets the neighbouring point in a certain direction
 	/// </summary>
 	/// <param name="directionVector">Direction to consider</param>
-	/// <returns></returns>
+	/// <returns>Returns the point if found otherwise null</returns>
+	/// TODO Should be changed to <see cref="Neighbour"/>
 	public Point GetNextPoint(Vector3 directionVector){
 		if (directionVector == Vector3.zero) {
-			throw new ArgumentException($"{nameof(directionVector)} cannot be Vector3.zero.");
+			throw new ArgumentException($"{nameof(directionVector)} cannot be a zero vector.");
 		}
 		var normalizedRightVector = directionVector.normalized;
-		foreach (var point in _neighbourPoints) {
-			var pointVector = (point.transform.position - transform.position).normalized;
-			var dotProduct = Vector3.Dot(pointVector, normalizedRightVector);
+		foreach (var neighbour in neighbours) {
+			var dotProduct = Vector3.Dot(neighbour.direction, normalizedRightVector);
 			if (dotProduct >= DirectionDotProductThresholdValue) {
-				return point;
+				return neighbour.point;
 			}
 		}
 
@@ -234,8 +240,8 @@ public class Point : MyMonoBehaviour{
 		Gizmos.color = Color.red;
 		Gizmos.DrawWireCube(transform.position, new Vector3(_gizmoCubeSize, _gizmoCubeSize, _gizmoCubeSize));
 
-		foreach (var neighbourPoint in _neighbourPoints) {
-			Gizmos.DrawLine(transform.position, neighbourPoint.transform.position);
+		foreach (var neighbourPoint in neighbours) {
+			Gizmos.DrawLine(transform.position, neighbourPoint.point.transform.position);
 		}
 
 		if (shouldDisplayRange) {
@@ -243,9 +249,11 @@ public class Point : MyMonoBehaviour{
 			Gizmos.DrawWireSphere(transform.position, _discoverDistance);
 		}
 
-		if (normal != Vector3.zero) {
-			Gizmos.color = Color.red;
-			GizmosUtil.DrawArrow(transform.position, transform.position + normal * normalRayLength);
+		if (shouldDisplayNormal) {
+			if (normal != Vector3.zero) {
+				Gizmos.color = Color.red;
+				GizmosUtil.DrawArrow(transform.position, transform.position + normal * normalRayLength);
+			}
 		}
 	}
 }

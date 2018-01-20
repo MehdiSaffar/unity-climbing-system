@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+
+using Sirenix.OdinInspector.Editor.Drawers;
+
 using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -13,7 +16,7 @@ public class CharacterAnimationController : MyMonoBehaviour
     /// <summary>
     /// Animator responsible for the animations
     /// </summary>
-    public Animator animator;
+    [HideInInspector] public Animator animator;
 
     /// <summary>
     /// List of triggers used to transition
