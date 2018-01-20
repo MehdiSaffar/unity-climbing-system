@@ -113,7 +113,7 @@ public class Point : MyMonoBehaviour{
 
 	private void Awake(){
 		_discoverSqrDistance = _discoverDistance * _discoverDistance;
-		_textMesh = GetComponent<TextMesh>();
+//		_textMesh = GetComponent<TextMesh>();
 		neighbours = new List<Neighbour>();
 		isVisited = false;
 	}

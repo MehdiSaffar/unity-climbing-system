@@ -192,7 +192,16 @@ MonoBehaviour:
       Entry: 8
       Data: 
     - Name: neighbours
-      Entry: 6
+      Entry: 7
+      Data: 3|System.Collections.Generic.List`1[[Neighbour, Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
       Data: 
   _pointsList: {fileID: 0}
   _isRoot: 0
@@ -202,4 +211,5 @@ MonoBehaviour:
   DirectionDotProductThresholdValue: 0.8
   _gizmoCubeSize: 0.1
   shouldDisplayRange: 0
+  shouldDisplayNormal: 0
   normalRayLength: 1

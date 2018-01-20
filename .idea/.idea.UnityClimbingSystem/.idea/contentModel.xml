@@ -71,6 +71,7 @@
           <e p="CameraFollower.cs" t="Include" />
           <e p="CharacterAnimationController.cs" t="Include" />
           <e p="GizmosUtil.cs" t="Include" />
+          <e p="HangInfo.cs" t="Include" />
           <e p="IKPositions.cs" t="Include" />
           <e p="IKTarget.cs" t="Include" />
           <e p="MovementType.cs" t="Include" />
