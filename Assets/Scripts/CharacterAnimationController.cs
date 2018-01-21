@@ -220,9 +220,16 @@ public class CharacterAnimationController : MyMonoBehaviour
         set
         {
             var _isClimbing = isClimbing;
-            if(!_isClimbing && value) animator.applyRootMotion = true;
-            else if (_isClimbing && !value)
+            if (!_isClimbing && value) {
+                animator.applyRootMotion = true;
+                Debug.Log("Root motion TRUE");
+            }
+            else if (_isClimbing && !value) {
                 animator.applyRootMotion = false;
+                Debug.Log("Root motion FALSE");
+
+            }
+
             SetBool(BOOL_IS_CLIMBING, value);
         }
     }
@@ -272,13 +279,7 @@ public class CharacterAnimationController : MyMonoBehaviour
         get { return _isShimmyRight; }
         set
         {
-            if (!_isShimmyRight && value)
-            {
-                animator.applyRootMotion = true;
-            } else if (_isShimmyRight && !value)
-            {
-                animator.applyRootMotion = false;
-            }
+            animator.applyRootMotion = value;
             _isShimmyRight = value;
         }
     }
@@ -290,10 +291,23 @@ public class CharacterAnimationController : MyMonoBehaviour
     /// Was the player shimmying left in the last frame?
     /// </summary>
     private bool wasShimmyLeft;
+
     /// <summary>
     /// Is the player shimmying left?
     /// </summary>
-    public bool isShimmyLeft;
+    private bool _isShimmyLeft;
+
+    /// <summary>
+    /// Is the player shimmying left?
+    /// </summary>
+    public bool isShimmyLeft{
+        get { return _isShimmyLeft; }
+        set
+        {
+            animator.applyRootMotion = value;
+            _isShimmyLeft = value;
+        }
+    }
 
     /// <summary>
     /// Returns the index of the current animator state
@@ -467,7 +481,8 @@ public class CharacterAnimationController : MyMonoBehaviour
                             Trigger(TRIGGER_BRACED_HANG);
                             break;
                         case Point.HangType.FreeHang:
-//                            Trigger(TRIGGER_FREE_HANG_SHIMMY_RIGHT);
+                            Debug.Log("right");
+                            Trigger(TRIGGER_FREE_HANG_SHIMMY_RIGHT);
                             break;
                     }
                 }
@@ -479,7 +494,8 @@ public class CharacterAnimationController : MyMonoBehaviour
 //                            Trigger(TRIGGER_BRACED_SHIMMY_LEFT);
                             break;
                         case Point.HangType.FreeHang:
-//                            Trigger(TRIGGER_FREE_HANG_SHIMMY_LEFT);
+                            Debug.Log("left");
+                            Trigger(TRIGGER_FREE_HANG_SHIMMY_LEFT);
                             break;
                     }
                 }
@@ -526,12 +542,7 @@ public class CharacterAnimationController : MyMonoBehaviour
     {
         if (isHanging)
         {
-            // Set left hand's IK
-            animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1);
-            animator.SetIKPosition(AvatarIKGoal.LeftHand, leftHandIK.position);
-            // Set right hand's IK
-            animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 1);
-            animator.SetIKPosition(AvatarIKGoal.RightHand, rightHandIK.position);
+
         }
     }
 }

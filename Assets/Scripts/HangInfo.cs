@@ -4,13 +4,13 @@
 public class HangInfo
 {
     /// <summary>
-    /// State of the hang
-    /// Final means that the player is grabbing the climb point with two hands
-    /// and is able to move to any other point
-    /// Midpoint means that the player is currently transitioning from a point to another
-    /// he generally can only do one of two things in this state
-    /// either keep moving in <see cref="currentDirection"/> or cancel his movement
-    /// by moving back to the previous point
+    /// State of the hang<br/>
+    /// Final means that the player is grabbing the climb point with two hands<br/>
+    /// and is able to move to any other point<br/>
+    /// Midpoint means that the player is currently transitioning from a point to another<br/>
+    /// he generally can only do one of two things in this state<br/>
+    /// either keep moving in <see cref="currentDirection"/> or cancel his movement<br/>
+    /// by moving back to the previous point<br/>
     /// </summary>
     public enum HangState
     {
@@ -18,10 +18,10 @@ public class HangInfo
         /// Final means the character has both hands on the ledge and can move
         /// </summary>
         Final,
-        /// <summary>
-        /// Midpoint means the character is holding two points and can only move forward or cancel his movement
-        /// </summary>
-        Midpoint,
+//        /// <summary>
+//        /// Midpoint means the character is holding two points and can only move forward or cancel his movement
+//        /// </summary>
+//        Midpoint,
         /// <summary>
         /// The character is undergoing a transition animation (e.g. going from <see cref="Final"/> to Midpoint states
         /// </summary>

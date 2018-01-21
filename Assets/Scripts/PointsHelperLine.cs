@@ -29,10 +29,11 @@ public class PointsHelperLine : MyMonoBehaviour
 	/// End position of climb points
 	/// </summary>
 	[SerializeField] private Transform endPosition;
+
 	/// <summary>
-	/// Count of points to be placed along the line
+	/// Distance between points
 	/// </summary>
-	[SerializeField] private int pointsCount;
+	[SerializeField] [UnityEngine.Range(0.1f,3f)] private float intervalDistance;
 
 	/// <summary>
 	/// Length of the gizmo ray that shows the normal of the points
@@ -45,24 +46,6 @@ public class PointsHelperLine : MyMonoBehaviour
 
 	private void Awake(){
 		placedPoints = new List<Point>();
-	}
-
-	void Start ()
-	{
-//		Point firstPoint = null;
-//		for (int i = 0; i <= pointsCount; i++)
-//		{
-//			var position = Vector3.Lerp(startPosition.position, endPosition.position, (float) i / pointsCount);
-//			var newPoint = Instantiate(pointPrefab.gameObject, position, transform.rotation, pointsList)
-//				.GetComponent<Point>();
-//			newPoint._pointsList = pointsList;
-//			if (i == 0)
-//			{
-//				firstPoint = newPoint;
-//			}
-//		}
-//		Debug.Assert(firstPoint != null, nameof(firstPoint) + " != null");
-//		firstPoint._isRoot = true;
 	}
 
 	private void Update(){
@@ -84,8 +67,10 @@ public class PointsHelperLine : MyMonoBehaviour
 
 	private void SetPointsInScene(){
 		Point firstPoint = null;
+		var totalDistance = (endPosition.transform.position - startPosition.transform.position).magnitude;
+		var pointsCount = totalDistance / intervalDistance;
 		for (int i = 0; i < pointsCount; i++) {
-			var position = Vector3.Lerp(startPosition.position, endPosition.position, (float) i / pointsCount);
+			var position = Vector3.Lerp(startPosition.position, endPosition.position, i / pointsCount);
 			var newPoint = Instantiate(pointPrefab.gameObject, position, transform.rotation, pointsList)
 				.GetComponent<Point>();
 			newPoint._pointsList = pointsList;

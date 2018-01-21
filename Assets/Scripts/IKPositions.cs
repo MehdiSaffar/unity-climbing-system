@@ -5,30 +5,30 @@ public class IKPositions {
     /// <summary>
     /// Target IK for the head
     /// </summary>
-    public IKTarget head;
+    public IKTarget head = new IKTarget();
 
     /// <summary>
     /// Target IK for the right hand
     /// </summary>
-    public IKTarget rightHand;
+    public IKTarget rightHand= new IKTarget();
 
     /// <summary>
     /// Target IK for the left hand
     /// </summary>
-    public IKTarget leftHand;
+    public IKTarget leftHand= new IKTarget();
 
     /// <summary>
     /// Target IK for the hips
     /// </summary>
-    public IKTarget hips;
+    public IKTarget hips= new IKTarget();
 
     /// <summary>
     /// Target IK for the right foot
     /// </summary>
-    public IKTarget rightFoot;
+    public IKTarget rightFoot= new IKTarget();
 
     /// <summary>
     /// Target IK for the left foot
     /// </summary>
-    public IKTarget leftFoot;
+    public IKTarget leftFoot= new IKTarget();
 }
