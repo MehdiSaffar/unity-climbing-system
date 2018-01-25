@@ -12,6 +12,13 @@
         <e p="DebugDrawingExtension" t="Include">
           <e p="DebugExtension.cs" t="Include" />
         </e>
+        <e p="Editor" t="Include">
+          <e p="Spline" t="Include">
+            <e p="BezierCurveInspector.cs" t="Include" />
+            <e p="BezierSplineInspector.cs" t="Include" />
+            <e p="LineInspector.cs" t="Include" />
+          </e>
+        </e>
         <e p="Plugins" t="Include">
           <e p="Sirenix" t="Include">
             <e p="Assemblies" t="Include">
@@ -87,6 +94,13 @@
           <e p="PointsHelperLine.cs" t="Include" />
           <e p="PointsManager.cs" t="Include" />
           <e p="SmoothMouseLook.cs" t="Include" />
+          <e p="Spline" t="Include">
+            <e p="BezierControlPointMode.cs" t="Include" />
+            <e p="BezierCurve.cs" t="Include" />
+            <e p="BezierSpline.cs" t="Include" />
+            <e p="Line.cs" t="Include" />
+            <e p="SplineWalker.cs" t="Include" />
+          </e>
         </e>
         <e p="Standard Assets" t="Include">
           <e p="CrossPlatformInput" t="Include">
