@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -41,6 +42,64 @@ public class PlayerController : MyMonoBehaviour{
 	private HangInfo _hang;
 
 	#region Gizmos Settings
+	/// <summary>
+	/// Should the velocity be displayed?
+	/// </summary>
+	[SerializeField] private bool showVelocityVector;
+
+	/// <summary>
+	/// Color of the velocity vector
+	/// </summary>
+	[SerializeField] private Color velocityVectorColor;
+
+	/// <summary>
+	/// Should the camera desire vectors be displayed?
+	/// </summary>
+	[SerializeField] private bool showCameraDesireVectors;
+
+	/// <summary>
+	/// Color of the camera desire vectos
+	/// </summary>
+	[SerializeField] private Color cameraDesireVectorColor;
+
+	/// <summary>
+	/// Should the character's axis be shown?
+	/// </summary>
+	[SerializeField] private bool showCharacterAxis;
+
+	/// <summary>
+	/// Color of the player's forward and right vectors
+	/// </summary>
+	[SerializeField] private Color characterAxisVectorColor;
+
+	/// <summary>
+	/// Should the ground ray be shown?
+	/// </summary>
+	[SerializeField] private bool showGroundAxis;
+	/// <summary>
+	/// Color of the ground ray
+	/// </summary>
+	[SerializeField] private Color groundAxisVectorColor;
+
+	/// <summary>
+	/// Should the vector to the closest climbable point be shown?
+	/// </summary>
+	[SerializeField] private bool showClosestPointVector;
+	/// <summary>
+	/// Color of the vector to the closest point
+	/// </summary>
+	[SerializeField] private Color closestPointVectorColor;
+
+	/// <summary>
+	/// Should the collision normal be shown?
+	/// </summary>
+	[SerializeField] private bool showCollisionNormal;
+
+	/// <summary>
+	/// Color of the collision normal
+	/// </summary>
+	[SerializeField] private Color collisionNormalColor;
+
 	/// <summary>
 	/// Length of the gizmo ray shooting to the right of the player
 	/// </summary>
@@ -130,6 +189,11 @@ public class PlayerController : MyMonoBehaviour{
 	#endregion
 
 	#region Current Player States
+	/// <summary>
+	/// Is the player colliding with a wall?
+	/// </summary>
+	[SerializeField] private bool isCollidingWithWall;
+
 	/// <summary>
 	/// Is the player grounded?
 	/// </summary>
@@ -336,11 +400,6 @@ public class PlayerController : MyMonoBehaviour{
 	#region Camera
 	private Vector3 cameraForwardDesireVector;
 	private Vector3 cameraRightDesireVector;
-
-	/// <summary>
-	/// Should the camera desire vectors be displayed?
-	/// </summary>
-	[SerializeField] private bool showCameraDesireVectors;
 	#endregion
 
 	/// <summary>
@@ -355,6 +414,17 @@ public class PlayerController : MyMonoBehaviour{
 	/// </summary>
 	private IKPositions ik;
 
+	/// <summary>
+	/// Normal of the wall the player is colliding against (if he is)
+	/// </summary>
+	private Vector3 collisionNormal;
+
+	/// <summary>
+	/// Point of collision (if any)
+	/// </summary>
+	private Vector3 collisionPoint;
+
+
 	private void Awake(){
 		controller = GetComponent<CharacterAnimationController>();
 		rb = GetComponent<Rigidbody>();
@@ -363,7 +433,6 @@ public class PlayerController : MyMonoBehaviour{
 
 	}
 
-	// Use this for initialization
 	private void Start(){
 		controller.walkSpeed = walkSpeed;
 		controller.jogSpeed = jogSpeed;
@@ -371,7 +440,6 @@ public class PlayerController : MyMonoBehaviour{
 		_pointSqrDistanceThreshold = pointDistanceThreshold * pointDistanceThreshold;
 	}
 
-	// Update is called once per frame
 	private void FixedUpdate(){
 //		closestClimbPoint = GetClosestPoint();
 		closestClimbPoint = null;
@@ -587,14 +655,37 @@ public class PlayerController : MyMonoBehaviour{
 			worldVelocity.y = rb.velocity.y;
 			// We let the animation controller know about the character's current velocity
 			// relative to it's forward...
+			if (_isCrouching) {
+				if (inputVector == Vector3.zero) {
+					controller.localVelocity.z = 0;
+				}
+				else {
+					controller.localVelocity.z = speed;
+				}
+			}
+			else {
+				controller.localVelocity.z = inputVector.y * speed;
+			}
 			controller.localVelocity.x = inputVector.x * speed;
 			controller.localVelocity.y = worldVelocity.y;
-			controller.localVelocity.z = inputVector.y * speed;
 
-			// Make the character face the camera view
-			transform.rotation = Quaternion.LookRotation(cameraForwardDesireVector, Vector3.up);
+			if (isCollidingWithWall && Vector3.Dot(worldVelocity, collisionNormal) < 0f) {
+				worldVelocity = Vector3.ProjectOnPlane(worldVelocity, collisionNormal);
+			}
 			// Set the new rigidbody velocity
 			rb.velocity = worldVelocity;
+
+			if (!_isCrouching) {
+				// Make the character face the camera view
+				transform.rotation = Quaternion.LookRotation(cameraForwardDesireVector, Vector3.up);
+			}
+			else {
+				// Because we do not have strafing animations, we will have to make the player face it's velocity
+				// and not the camera
+				if(worldVelocity != Vector3.zero)
+					transform.rotation = Quaternion.LookRotation(worldVelocity, Vector3.up);
+			}
+
 		}
 		currentVelocityY = rb.velocity.y;
 
@@ -790,6 +881,34 @@ public class PlayerController : MyMonoBehaviour{
 	}
 	#endregion
 
+	private void OnCollisionEnter(Collision other){
+		var contact = other.contacts.FirstOrDefault();
+		CheckWallCollision(contact);
+	}
+
+	/// <summary>
+	/// Checks if the character is colliding with a wall (and not the ground for example)
+	/// </summary>
+	/// <param name="contact">Contact point</param>
+	private void CheckWallCollision(ContactPoint contact){
+		if (Mathf.Abs(Vector3.Dot(contact.normal, Vector3.up)) < 0.5f) {
+			isCollidingWithWall = true;
+			collisionNormal = contact.normal;
+			collisionPoint = contact.point;
+		}
+	}
+
+	private void OnCollisionStay(Collision other){
+		var contact = other.contacts.FirstOrDefault();
+		CheckWallCollision(contact);
+	}
+
+	private void OnCollisionExit(Collision other){
+		isCollidingWithWall = false;
+		collisionNormal = Vector3.zero;
+		collisionPoint = Vector3.zero;
+	}
+
 	private void OnAnimatorIK(int layerIndex){
 		if (_isHanging) {
 			// Set right hand's IK
@@ -841,20 +960,35 @@ public class PlayerController : MyMonoBehaviour{
 	}
 
 	private void OnDrawGizmos(){
-		Gizmos.color = Color.blue;
-		Gizmos.DrawLine(feetMidpoint + Vector3.up * 0.04f, feetMidpoint + Vector3.up * 0.02f + Vector3.down * downRayLength);
-		GizmosUtil.DrawArrow(transform.position, transform.position + transform.forward * forwardRayLength);
-		GizmosUtil.DrawArrow(transform.position, transform.position + transform.right * rightRayLength);
-		if (closestClimbPoint != null) {
-			Gizmos.color = Color.black;
+		if (showGroundAxis) {
+			Gizmos.color = groundAxisVectorColor;
+			Gizmos.DrawLine(feetMidpoint + Vector3.up * 0.04f, feetMidpoint + Vector3.up * 0.02f + Vector3.down * downRayLength);
+
+		}
+		if (showCharacterAxis) {
+			Gizmos.color = characterAxisVectorColor;
+			GizmosUtil.DrawArrow(transform.position, transform.position + transform.forward * forwardRayLength);
+			GizmosUtil.DrawArrow(transform.position, transform.position + transform.right * rightRayLength);
+		}
+		if (showClosestPointVector && closestClimbPoint != null) {
+			Gizmos.color = closestPointVectorColor;
 			Gizmos.DrawLine(transform.position, closestClimbPoint.transform.position);
 		}
-
 		if (showCameraDesireVectors) {
-			Gizmos.color = Color.green;
+			Gizmos.color = cameraDesireVectorColor;
 			GizmosUtil.DrawArrow(transform.position, transform.position + cameraForwardDesireVector);
 			GizmosUtil.DrawArrow(transform.position, transform.position + cameraRightDesireVector);
 
+		}
+		if (showVelocityVector) {
+			if (rb != null) {
+				Gizmos.color = velocityVectorColor;
+				GizmosUtil.DrawArrow(transform.position, transform.position + rb.velocity);
+			}
+		}
+		if (showCollisionNormal && isCollidingWithWall) {
+			Gizmos.color = collisionNormalColor;
+			GizmosUtil.DrawArrow(collisionPoint, collisionPoint + collisionNormal);
 		}
 	}
 }
