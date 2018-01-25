@@ -56,17 +56,13 @@ public class CharacterAnimationController : MyMonoBehaviour{
         "isGrounded",
         "isCrouching",
         "isJumping",
-        "isClimbing",
-        "isStrafingRight",
-        "isStrafingLeft"
+        "isClimbing"
     };
 
     private const int BOOL_IS_GROUNDED = 0;
     private const int BOOL_IS_CROUCHING = 1;
     private const int BOOL_IS_JUMPING = 2;
     private const int BOOL_IS_CLIMBING = 3;
-    private const int BOOL_IS_STRAFING_RIGHT = 4;
-    private const int BOOL_IS_STRAFING_LEFT = 5;
 
     /// <summary>
     /// List of floats used to transitiom
@@ -74,16 +70,16 @@ public class CharacterAnimationController : MyMonoBehaviour{
     private static readonly string[] FLOATS = {
         "distanceToGround",
         "yVelocity",
-        "forwardSpeed",
-        "IdleWalkBlend",
-        "JumpBlend"
+        "JumpBlend",
+        "velX",
+        "velZ"
     };
 
     private const int FLOAT_DISTANCE_TO_GROUND = 0;
     private const int FLOAT_Y_VELOCITY = 1;
-    private const int FLOAT_FORWARD_SPEED = 2;
-    private const int FLOAT_IDLE_WALK_BLEND = 3;
-    private const int FLOAT_JUMP_BLEND = 4;
+    private const int FLOAT_JUMP_BLEND = 2;
+    private const int FLOAT_X_VELOCITY = 3;
+    private const int FLOAT_Z_VELOCITY = 4;
 
     /// <summary>
     /// List of some states used from the code
@@ -153,13 +149,21 @@ public class CharacterAnimationController : MyMonoBehaviour{
         set { SetFloat(FLOAT_Y_VELOCITY, value); }
     }
 
-    /// <summary>
-    /// Speed of the player along the XZ world plane
-    /// </summary>
-    public float forwardSpeed{
-        get { return GetFloat(FLOAT_FORWARD_SPEED); }
-        set { SetFloat(FLOAT_FORWARD_SPEED, value); }
+    public float velX{
+        get { return GetFloat(FLOAT_X_VELOCITY); }
+        set
+        {
+            SetFloat(FLOAT_X_VELOCITY, value);
+        }
     }
+    public float velZ{
+        get { return GetFloat(FLOAT_Z_VELOCITY); }
+        set
+        {
+            SetFloat(FLOAT_Z_VELOCITY, value);
+        }
+    }
+
 
     /// <summary>
     /// Is the player crouching?
@@ -244,11 +248,6 @@ public class CharacterAnimationController : MyMonoBehaviour{
     private bool wasJumping;
 
     /// <summary>
-    /// Current speed (walk speed, jog speed,...)
-    /// </summary>
-    [HideInInspector] public float currentSpeed;
-
-    /// <summary>
     /// Speed of the player when jogging
     /// </summary>
     [HideInInspector] public float jogSpeed;
@@ -290,15 +289,10 @@ public class CharacterAnimationController : MyMonoBehaviour{
     /// </summary>
     private bool _isShimmyLeft;
 
-    public bool isStrafingLeft{
-        get { return GetBool(BOOL_IS_STRAFING_LEFT); }
-        set { SetBool(BOOL_IS_STRAFING_LEFT, value); }
-    }
-
-    public bool isStrafingRight{
-        get { return GetBool(BOOL_IS_STRAFING_RIGHT); }
-        set { SetBool(BOOL_IS_STRAFING_RIGHT, value); }
-    }
+    /// <summary>
+    /// Current player velocity
+    /// </summary>
+    public Vector3 currentVelocity;
 
     /// <summary>
     /// Is the player shimmying left?
@@ -327,14 +321,6 @@ public class CharacterAnimationController : MyMonoBehaviour{
 
             return -1;
         }
-    }
-
-    /// <summary>
-    /// A blend float where 0 = idle, 1 = walking, 2 = jog speed
-    /// </summary>
-    private float idleWalkBlend{
-        get { return GetFloat(FLOAT_IDLE_WALK_BLEND); }
-        set { SetFloat(FLOAT_IDLE_WALK_BLEND, value); }
     }
 
     /// <summary>
@@ -395,23 +381,7 @@ public class CharacterAnimationController : MyMonoBehaviour{
         animator = GetComponent<Animator>();
     }
 
-    private void Start(){
-
-//        var bracedHangShimmyRightBehaviour = mAnimator.GetBehaviour<BracedHangShimmyRightBehaviour>();
-//        var bracedHangShimmyLeftBehaviour = mAnimator.GetBehaviour<BracedHangShimmyLeftBehaviours>();
-//        bracedHangShimmyRightBehaviour.OnAnimationEnd += () =>
-//        {
-//            isShimmyRight = false;
-//            OnBracedShimmyAnimationEnd?.Invoke();
-//        };
-//        bracedHangShimmyLeftBehaviour.OnAnimationEnd += () =>
-//        {
-//            isShimmyLeft = false;
-//            OnBracedShimmyAnimationEnd?.Invoke();
-//        };
-    }
-
-    private void Update(){
+    private void FixedUpdate(){
         SetBlends();
         ProcessStateCases();
         SetLastFrameStates();
@@ -506,18 +476,11 @@ public class CharacterAnimationController : MyMonoBehaviour{
     /// Sets the blends based on multiple factors (e.g. sets locomotion blend tree based on player's current speed)
     /// </summary>
     private void SetBlends(){
-        if (currentSpeed >= jogSpeed) {
-            idleWalkBlend = 2;
-            jumpBlend = 1;
-        }
-        else if (currentSpeed >= walkSpeed) {
-            idleWalkBlend = 1;
-            jumpBlend = 0;
-        }
-        else {
-            jumpBlend = 0;
-            idleWalkBlend = 0;
-        }
+        var oldY = currentVelocity.y;
+        currentVelocity /= jogSpeed;
+        currentVelocity.y = oldY;
+        velX = currentVelocity.x;
+        velZ = currentVelocity.z;
     }
 
     /// <summary>

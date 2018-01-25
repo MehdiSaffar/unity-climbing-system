@@ -233,7 +233,7 @@ ModelImporter:
     400222: TongueBack
     400224: TongueMid
     400226: TongueTip
-    7400000: Right Strafe Walking (1)
+    7400000: Left Strafe Walking
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -260,7 +260,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Right Strafe Walking (1)
+      name: Left Strafe Walking
       takeName: mixamo.com
       firstFrame: 0
       lastFrame: 31
@@ -274,10 +274,10 @@ ModelImporter:
       loopBlend: 1
       loopBlendOrientation: 1
       loopBlendPositionY: 1
-      loopBlendPositionXZ: 1
+      loopBlendPositionXZ: 0
       keepOriginalOrientation: 1
       keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
+      keepOriginalPositionXZ: 1
       heightFromFeet: 0
       mirror: 1
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000

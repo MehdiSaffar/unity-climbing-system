@@ -463,8 +463,8 @@ MonoBehaviour:
   jumpVelocityY: 5
   fallVelocityThreshold: -4.5
   shimmyAnimationDuration: 1.167
-  showCameraDesireVectors: 0
-  strafeSpeed: 0
+  showCameraDesireVectors: 1
+  strafeSpeed: 3
 --- !u!114 &579009964
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -490,9 +490,9 @@ MonoBehaviour:
   leftHandIK: {fileID: 0}
   isHanging: 0
   hangType: 0
-  currentSpeed: 0
   jogSpeed: 0
   walkSpeed: 0
+  currentVelocity: {x: 0, y: 0, z: 0}
 --- !u!136 &579009965
 CapsuleCollider:
   m_ObjectHideFlags: 0
