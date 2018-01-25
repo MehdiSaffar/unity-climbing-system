@@ -280,16 +280,6 @@ public class PlayerController : MyMonoBehaviour{
 	/// Was the player climbing in the last frame?
 	/// </summary>
 	[UsedImplicitly] public bool _wasClimbing;
-
-	/// <summary>
-	/// Was the character strafing right in the last frame?
-	/// </summary>
-	[UsedImplicitly] [SerializeField] private bool wasStrafingRight;
-
-	/// <summary>
-	/// Was the character strafing left in the last frame?
-	/// </summary>
-	[UsedImplicitly] [SerializeField] private bool wasStrafingLeft;
 	#endregion
 
 	#region Speeds
@@ -424,6 +414,8 @@ public class PlayerController : MyMonoBehaviour{
 	/// </summary>
 	private Vector3 collisionPoint;
 
+	[SerializeField] private Vector3 targetInputVector;
+	[SerializeField] private float lerpSpeed;
 
 	private void Awake(){
 		controller = GetComponent<CharacterAnimationController>();
@@ -593,8 +585,14 @@ public class PlayerController : MyMonoBehaviour{
 		var mainCamera = Camera.main;
 		var cameraForward = mainCamera.transform.forward;
 		var cameraRight = mainCamera.transform.right;
-		cameraForwardDesireVector = Vector3.ProjectOnPlane(cameraForward, transform.up).normalized;
-		cameraRightDesireVector = Vector3.ProjectOnPlane(cameraRight, transform.up).normalized;
+			cameraForwardDesireVector = Vector3.Slerp(
+				cameraForwardDesireVector,
+				Vector3.ProjectOnPlane(cameraForward, transform.up).normalized,
+				lerpSpeed);
+		cameraRightDesireVector = Vector3.Slerp(
+			cameraRightDesireVector,
+			Vector3.ProjectOnPlane(cameraRight, transform.up).normalized,
+			lerpSpeed);
 	}
 
 	/// <summary>
@@ -625,8 +623,12 @@ public class PlayerController : MyMonoBehaviour{
 	/// <param name="canJog">Can the player jog?</param>
 	/// TODO: Requires refactoring of the parameters
 	private void UpdateTransform(){
-		var forward = (cameraForwardDesireVector * inputVector.y).normalized;
-		var right = (cameraRightDesireVector * inputVector.x).normalized;
+		targetInputVector = inputVector == Vector3.zero
+			? inputVector
+			: Vector3.Slerp(targetInputVector, inputVector, lerpSpeed);
+//		targetInputVector = inputVector;
+		var forward = (cameraForwardDesireVector * targetInputVector.y);
+		var right = (cameraRightDesireVector * targetInputVector.x);
 		float speed;
 		if (_isJumping || _isHanging || _isFalling || _isClimbing) {
 			// We keep the same speed as last time and the same forward
@@ -653,25 +655,23 @@ public class PlayerController : MyMonoBehaviour{
 			var worldVelocity = (forward + right).normalized * speed;
 
 			worldVelocity.y = rb.velocity.y;
-			// We let the animation controller know about the character's current velocity
-			// relative to it's forward...
-			if (_isCrouching) {
-				if (inputVector == Vector3.zero) {
-					controller.localVelocity.z = 0;
-				}
-				else {
-					controller.localVelocity.z = speed;
-				}
-			}
-			else {
-				controller.localVelocity.z = inputVector.y * speed;
-			}
-			controller.localVelocity.x = inputVector.x * speed;
-			controller.localVelocity.y = worldVelocity.y;
 
 			if (isCollidingWithWall && Vector3.Dot(worldVelocity, collisionNormal) < 0f) {
 				worldVelocity = Vector3.ProjectOnPlane(worldVelocity, collisionNormal);
 			}
+
+
+			// We let the animation controller know about the character's current velocity
+			// relative to it's forward...
+			if (_isCrouching) {
+				controller.localVelocity.z = targetInputVector == Vector3.zero ? 0 : speed;
+			}
+			else {
+				controller.localVelocity.z = targetInputVector.y * speed;
+			}
+			controller.localVelocity.x = targetInputVector.x * speed;
+			controller.localVelocity.y = worldVelocity.y;
+
 			// Set the new rigidbody velocity
 			rb.velocity = worldVelocity;
 
@@ -778,8 +778,6 @@ public class PlayerController : MyMonoBehaviour{
 		_wasCrouching = _isCrouching;
 		_wasFalling = _isFalling;
 		_wasClimbing = _isClimbing;
-		wasStrafingLeft = isStrafingLeft;
-		wasStrafingRight = isStrafingRight;
 	}
 
 	#region Jumping-related methods
