@@ -120,6 +120,16 @@ public class PlayerController : MyMonoBehaviour{
 	public bool _isClimbing;
 
 	/// <summary>
+	/// Is the character strafing right?
+	/// </summary>
+	[SerializeField] private bool isStrafingRight;
+
+	/// <summary>
+	/// Is the character strafing left?
+	/// </summary>
+	[SerializeField] private bool isStrafingLeft;
+
+	/// <summary>
 	/// Was the player jumping in the last frame?
 	/// </summary>
 	[UsedImplicitly] public bool _wasJumping;
@@ -155,6 +165,16 @@ public class PlayerController : MyMonoBehaviour{
 	[UsedImplicitly] public bool _wasClimbing;
 
 	/// <summary>
+	/// Was the character strafing right in the last frame?
+	/// </summary>
+	[UsedImplicitly] [SerializeField] private bool wasStrafingRight;
+
+	/// <summary>
+	/// Was the character strafing left in the last frame?
+	/// </summary>
+	[UsedImplicitly] [SerializeField] private bool wasStrafingLeft;
+
+	/// <summary>
 	/// Current vertical velocity of the player
 	/// </summary>
 	[Header("Speeds")] public float currentVelocityY;
@@ -182,27 +202,27 @@ public class PlayerController : MyMonoBehaviour{
 	/// <summary>
 	/// Is the spacebar pressed up?
 	/// </summary>
-	private bool spaceUp;
+	private bool spaceDown;
 
 	/// <summary>
 	/// Is the crouch button pressed up?
 	/// </summary>
-	private bool crouchUp;
+	private bool crouchDown;
 
 	/// <summary>
 	/// Is the hanging button pressed up?
 	/// </summary>
-	private bool hangUp;
+	private bool hangDown;
 
 	/// <summary>
 	/// Is the right movement button pressed up?
 	/// </summary>
-	private bool rightUp;
+	private bool rightDown;
 
 	/// <summary>
 	/// Is the left movement button pressed up?
 	/// </summary>
-	private bool leftUp;
+	private bool leftDown;
 
 	/// <summary>
 	/// Is the shift button pressed up?
@@ -242,7 +262,20 @@ public class PlayerController : MyMonoBehaviour{
 	private float timelapseShimmy;
 
 	private IKPositions ik;
-	private Vector3 cameraDesireVector;
+	private Vector3 cameraForwardDesireVector;
+	private Vector3 cameraRightDesireVector;
+
+	/// <summary>
+	/// Should the camera desire vectors be displayed?
+	/// </summary>
+	[SerializeField] private bool showCameraDesireVectors;
+
+	/// <summary>
+	/// Strafe speed
+	/// </summary>
+	[SerializeField] private float strafeSpeed;
+
+
 
 	private void Awake(){
 		animationController = GetComponent<CharacterAnimationController>();
@@ -294,21 +327,20 @@ public class PlayerController : MyMonoBehaviour{
 		// Sets the "keyPressed"...
 		GetInputState();
 
-		var mainCamera = Camera.main;
-		var cameraForward = mainCamera.transform.forward;
-		cameraDesireVector = Vector3.ProjectOnPlane(cameraForward, transform.up).normalized;
+		// Set the camera desire vectors
+		SetCameraDesireVectors();
 
 		// Movement input vector
 		var inputVector = Vector3.zero;
 		if (!IsInputLocked) {
 			if (forwardPressed)
-				inputVector.z += 1;
+				inputVector += cameraForwardDesireVector;
 			if (backwardPressed)
-				inputVector.z -= 1;
+				inputVector -= cameraForwardDesireVector;
 			if (rightPressed)
-				inputVector.x += 1;
+				inputVector += cameraRightDesireVector;
 			if (leftPressed)
-				inputVector.x -= 1;
+				inputVector -= cameraRightDesireVector;
 		}
 
 		// State transition conditions
@@ -317,6 +349,7 @@ public class PlayerController : MyMonoBehaviour{
 		bool canWalk = /*_isGrounded && */!_isJumping;
 		bool canJog = /*_isGrounded && */!_isCrouching /* && !_isJumping*/;
 		bool canHang = _isGrounded && closestClimbPoint != null && !_isCrouching && !_isJumping;
+		bool canStrafe = _isGrounded;
 		bool canClimb = _isHanging;
 		// If the point requires the player to be facing a certain way, then we add the condition
 		if (canHang && closestClimbPoint.HasNormal) {
@@ -342,18 +375,18 @@ public class PlayerController : MyMonoBehaviour{
 			}
 		}
 		else {
-			if (canJump && spaceUp) {
+			if (canJump && spaceDown) {
 				_isJumping = true;
 				Debug.Log("Started Jumping");
 			}
 		}
 
-		if (crouchUp && canCrouch) {
+		if (crouchDown && canCrouch) {
 			_isCrouching = !_isCrouching;
 			Debug.Log(_isCrouching ? "Started Crouching" : "Stopped Crouching");
 		}
 
-		if (hangUp) {
+		if (hangDown) {
 			if (_isHanging && _hang.state == HangInfo.HangState.Final) {
 				Unhang();
 			}
@@ -363,17 +396,26 @@ public class PlayerController : MyMonoBehaviour{
 		}
 
 		if (_isHanging) {
-			if (rightUp) {
+			if (rightDown) {
 				Shimmy(HangInfo.Direction.Right);
 			}
 
-			if (leftUp) {
+			if (leftDown) {
 				Shimmy(HangInfo.Direction.Left);
 			}
 
-			if (spaceUp && canClimb) {
+			if (spaceDown && canClimb) {
 				Climb();
 			}
+		}
+
+		isStrafingRight = false;
+		isStrafingLeft = false;
+		if (rightPressed) {
+			if (canStrafe) isStrafingRight = true;
+		}
+		else if (leftPressed) {
+			if (canStrafe) isStrafingLeft = true;
 		}
 
 		UpdateTransform(inputVector, canWalk, canJog);
@@ -381,6 +423,17 @@ public class PlayerController : MyMonoBehaviour{
 		SetAnimationControllerStates();
 		SetLastFrameStates();
 		currentVelocityY = _rigidbody.velocity.y;
+	}
+
+	/// <summary>
+	/// Sets the camera desire vectors in memory
+	/// </summary>
+	private void SetCameraDesireVectors(){
+		var mainCamera = Camera.main;
+		var cameraForward = mainCamera.transform.forward;
+		var cameraRight = mainCamera.transform.right;
+		cameraForwardDesireVector = Vector3.ProjectOnPlane(cameraForward, transform.up).normalized;
+		cameraRightDesireVector = Vector3.ProjectOnPlane(cameraRight, transform.up).normalized;
 	}
 
 	/// <summary>
@@ -392,6 +445,7 @@ public class PlayerController : MyMonoBehaviour{
 	/// TODO: Requires refactoring of the parameters
 	private void UpdateTransform(Vector3 inputVector, bool canWalk, bool canJog){
 		var forward = inputVector;
+		var right = cameraRightDesireVector * inputVector.x;
 		if (forward.sqrMagnitude > 1) {
 			forward.Normalize();
 		}
@@ -419,16 +473,19 @@ public class PlayerController : MyMonoBehaviour{
 		lastSpeed = speed;
 		animationController.currentSpeed = speed;
 		if (!_isHanging) {
-			var velocity = forward * speed;
+			var velocity = forward * speed + right * strafeSpeed;
 			velocity.y = _rigidbody.velocity.y;
-			if (forward != Vector3.zero)
-				transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
-			_rigidbody.velocity = velocity;
-//			if (landingFromJumping)
-//			{
-//				_rigidbody.velocity /= 2;
+//			if (forward != Vector3.zero)
+//				transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
+//			else {
+				transform.rotation =
+					Quaternion.LookRotation(
+						Vector3.Slerp(transform.forward,
+							cameraForwardDesireVector,
+							Time.fixedDeltaTime),
+						Vector3.up);
 //			}
-//			_rigidbody.AddForce(forward * speed * Time.deltaTime);
+			_rigidbody.velocity = velocity;
 		}
 	}
 
@@ -439,12 +496,12 @@ public class PlayerController : MyMonoBehaviour{
 
 	private void GetInputState(){
 		// Action keys
-		spaceUp = Input.GetKeyUp(KeyCode.Space);
-		crouchUp = Input.GetKeyUp(KeyCode.C);
-		hangUp = Input.GetKeyUp(KeyCode.LeftControl);
-		//upUp = Input.GetKeyUp(KeyCode.W);
-		rightUp = Input.GetKeyUp(KeyCode.D);
-		leftUp = Input.GetKeyUp(KeyCode.A);
+		spaceDown = Input.GetKeyDown(KeyCode.Space);
+		crouchDown = Input.GetKeyDown(KeyCode.C);
+		hangDown = Input.GetKeyDown(KeyCode.LeftControl);
+		//upDown = Input.GetKeyDown(KeyCode.W);
+		rightDown = Input.GetKeyDown(KeyCode.D);
+		leftDown = Input.GetKeyDown(KeyCode.A);
 		// State keys
 		shiftPressed = Input.GetKey(KeyCode.LeftShift);
 		// Movement keys
@@ -529,6 +586,8 @@ public class PlayerController : MyMonoBehaviour{
 		animationController.isGrounded = _isGrounded;
 		animationController.isHanging = _isHanging;
 		animationController.isClimbing = _isClimbing;
+		animationController.isStrafingLeft = isStrafingLeft;
+		animationController.isStrafingRight = isStrafingRight;
 	}
 
 	private void SetLastFrameStates(){
@@ -539,6 +598,8 @@ public class PlayerController : MyMonoBehaviour{
 		_wasCrouching = _isCrouching;
 		_wasFalling = _isFalling;
 		_wasClimbing = _isClimbing;
+		wasStrafingLeft = isStrafingLeft;
+		wasStrafingRight = isStrafingRight;
 	}
 
 	private void OnDrawGizmos(){
@@ -551,8 +612,12 @@ public class PlayerController : MyMonoBehaviour{
 			Gizmos.DrawLine(transform.position, closestClimbPoint.transform.position);
 		}
 
+		if (showCameraDesireVectors) {
 		Gizmos.color = Color.green;
-		GizmosUtil.DrawArrow(transform.position, transform.position + cameraDesireVector);
+		GizmosUtil.DrawArrow(transform.position, transform.position + cameraForwardDesireVector);
+			GizmosUtil.DrawArrow(transform.position, transform.position + cameraRightDesireVector);
+
+		}
 	}
 
 	private void Shimmy(HangInfo.Direction direction){

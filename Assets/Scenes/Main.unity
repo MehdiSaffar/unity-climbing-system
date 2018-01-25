@@ -410,7 +410,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 579009960}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 84c4f27738bd2b448b16061ff423212c, type: 3}
   m_Name: 
@@ -446,6 +446,8 @@ MonoBehaviour:
   _isLandingFromJump: 0
   _isFalling: 0
   _isClimbing: 0
+  isStrafingRight: 0
+  isStrafingLeft: 0
   _wasJumping: 0
   _wasMidair: 0
   _wasGrounded: 0
@@ -453,19 +455,23 @@ MonoBehaviour:
   _wasHanging: 0
   _wasFalling: 0
   _wasClimbing: 0
+  wasStrafingRight: 0
+  wasStrafingLeft: 0
   currentVelocityY: 0
   walkSpeed: 1.55
   jogSpeed: 3
   jumpVelocityY: 5
   fallVelocityThreshold: -4.5
   shimmyAnimationDuration: 1.167
+  showCameraDesireVectors: 0
+  strafeSpeed: 0
 --- !u!114 &579009964
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 579009960}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 446b0d6fbdbd5e64e881ce9d634aa17d, type: 3}
   m_Name: 
@@ -1493,8 +1499,14 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  mTarget: {fileID: 200623644}
+  target: {fileID: 200623644}
   useMouse: 1
+  verticalSpeed: 5
+  horizontalSpeed: 15
+  maxOldOffsetCount: 10
+  lockCursor: 1
   showOffsetTrails: 0
-  maxPitch: 45
-  minPitch: 0
+  showPitchLimits: 0
+  showOffset: 1
+  maximumPitchAngle: 60
+  minimumPitchAngle: 0

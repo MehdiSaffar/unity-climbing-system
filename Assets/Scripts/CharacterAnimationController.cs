@@ -11,8 +11,7 @@ using UnityEngine.Rendering;
 /// Animation controller of the player character
 /// </summary>
 [RequireComponent(typeof(Animator))]
-public class CharacterAnimationController : MyMonoBehaviour
-{
+public class CharacterAnimationController : MyMonoBehaviour{
     /// <summary>
     /// Animator responsible for the animations
     /// </summary>
@@ -21,8 +20,7 @@ public class CharacterAnimationController : MyMonoBehaviour
     /// <summary>
     /// List of triggers used to transition
     /// </summary>
-    private static readonly string[] TRIGGERS =
-    {
+    private static readonly string[] TRIGGERS = {
         "BracedHangTrigger",
         "BracedHangUntrigger",
         "BracedShimmyRightTrigger",
@@ -38,36 +36,42 @@ public class CharacterAnimationController : MyMonoBehaviour
     private const int TRIGGER_BRACED_HANG = 0;
     private const int TRIGGER_BRACED_UNHANG = 1;
     private const int TRIGGER_BRACED_SHIMMY_RIGHT = 2;
+
     private const int TRIGGER_BRACED_SHIMMY_LEFT = 3;
+
     // Free Hangs
     private const int TRIGGER_FREE_HANG_HANG = 4;
     private const int TRIGGER_FREE_HANG_UNHANG = 5;
     private const int TRIGGER_FREE_HANG_SHIMMY_RIGHT = 6;
+
     private const int TRIGGER_FREE_HANG_SHIMMY_LEFT = 7;
+
     // Fall
     private const int TRIGGER_FALLING_IDLE = 8;
 
     /// <summary>
     /// List of booleans used to tronsition
     /// </summary>
-    private static readonly string[] BOOLS =
-    {
+    private static readonly string[] BOOLS = {
         "isGrounded",
         "isCrouching",
         "isJumping",
-        "isClimbing"
+        "isClimbing",
+        "isStrafingRight",
+        "isStrafingLeft"
     };
 
     private const int BOOL_IS_GROUNDED = 0;
     private const int BOOL_IS_CROUCHING = 1;
     private const int BOOL_IS_JUMPING = 2;
     private const int BOOL_IS_CLIMBING = 3;
+    private const int BOOL_IS_STRAFING_RIGHT = 4;
+    private const int BOOL_IS_STRAFING_LEFT = 5;
 
     /// <summary>
     /// List of floats used to transitiom
     /// </summary>
-    private static readonly string[] FLOATS =
-    {
+    private static readonly string[] FLOATS = {
         "distanceToGround",
         "yVelocity",
         "forwardSpeed",
@@ -84,8 +88,7 @@ public class CharacterAnimationController : MyMonoBehaviour
     /// <summary>
     /// List of some states used from the code
     /// </summary>
-    private static readonly string[] STATES =
-    {
+    private static readonly string[] STATES = {
         "Standing Blend Tree",
         "Crouching Blend Tree",
         "Idle Braced Hang",
@@ -103,6 +106,7 @@ public class CharacterAnimationController : MyMonoBehaviour
     /// The end position of the ray shooting from the hips
     /// </summary>
     private Vector3 hipsFrontRayEnd;
+
     /// <summary>
     ///  The start position of the ray shooting from the hips
     /// </summary>
@@ -112,6 +116,7 @@ public class CharacterAnimationController : MyMonoBehaviour
     /// Reference to the transform that hints where the right hand should be
     /// </summary>
     [HideInInspector] public Transform rightHandIK;
+
     /// <summary>
     /// Reference to the transform that hints where the left hand should be
     /// </summary>
@@ -121,10 +126,12 @@ public class CharacterAnimationController : MyMonoBehaviour
     /// Is the player hanging on a ledge?
     /// </summary>
     public bool isHanging;
+
     /// <summary>
     /// How is the player hanging on the ledge?
     /// </summary>
     public Point.HangType hangType;
+
 //
 //    private float _distanceToGround;
 //    private float _yVelocity;
@@ -141,81 +148,65 @@ public class CharacterAnimationController : MyMonoBehaviour
     /// <summary>
     /// Velocity along the y world axis
     /// </summary>
-    public float yVelocity
-    {
+    public float yVelocity{
         get { return GetFloat(FLOAT_Y_VELOCITY); }
-        set
-        {
-            SetFloat(FLOAT_Y_VELOCITY, value);
-        }
+        set { SetFloat(FLOAT_Y_VELOCITY, value); }
     }
+
     /// <summary>
     /// Speed of the player along the XZ world plane
     /// </summary>
-    public float forwardSpeed
-    {
-        get { return GetFloat(FLOAT_FORWARD_SPEED);}
-        set
-        {
-            SetFloat(FLOAT_FORWARD_SPEED, value);
-        }
+    public float forwardSpeed{
+        get { return GetFloat(FLOAT_FORWARD_SPEED); }
+        set { SetFloat(FLOAT_FORWARD_SPEED, value); }
     }
+
     /// <summary>
     /// Is the player crouching?
     /// </summary>
-    public bool isCrouching
-    {
+    public bool isCrouching{
         get { return GetBool(BOOL_IS_CROUCHING); }
-        set
-        {
-            SetBool(BOOL_IS_CROUCHING, value);
-        }
+        set { SetBool(BOOL_IS_CROUCHING, value); }
     }
+
     /// <summary>
     /// Is the player jumping?
     /// </summary>
-    public bool isJumping
-    {
+    public bool isJumping{
         get { return GetBool(BOOL_IS_JUMPING); }
-        set
-        {
-            SetBool(BOOL_IS_JUMPING, value);
-        }
+        set { SetBool(BOOL_IS_JUMPING, value); }
     }
+
     /// <summary>
     /// Is the player touching/close enough to the ground?
     /// </summary>
-    public bool isGrounded
-    {
+    public bool isGrounded{
         get { return GetBool(BOOL_IS_GROUNDED); }
-        set
-        {
-            SetBool(BOOL_IS_GROUNDED, value);
-        }
+        set { SetBool(BOOL_IS_GROUNDED, value); }
     }
+
     /// <summary>
     /// Is the player falling?
     /// </summary>
-    public bool isFalling
-    {
+    public bool isFalling{
         get { return _isFalling; }
         set
         {
-            if (!_isFalling && value)
-            {
+            if (!_isFalling && value) {
                 Trigger(TRIGGER_FALLING_IDLE);
-            } else if (!value)
-            {
+            }
+            else if (!value) {
                 Trigger(TRIGGER_FALLING_IDLE, false);
             }
+
             _isFalling = value;
         }
     }
+
     /// <summary>
     /// Is the player climbing a ledge?
     /// </summary>
-    public bool isClimbing
-    {
+    public bool isClimbing{
         get { return GetBool(BOOL_IS_CLIMBING); }
         set
         {
@@ -233,22 +224,20 @@ public class CharacterAnimationController : MyMonoBehaviour
             SetBool(BOOL_IS_CLIMBING, value);
         }
     }
+
     /// <summary>
     /// Distance of the feet of the player from the ground
     /// </summary>
-    public float distanceToGround
-    {
+    public float distanceToGround{
         get { return GetFloat(FLOAT_DISTANCE_TO_GROUND); }
-        set
-        {
-            SetFloat(FLOAT_DISTANCE_TO_GROUND, value);
-        }
+        set { SetFloat(FLOAT_DISTANCE_TO_GROUND, value); }
     }
 
     /// <summary>
     /// Was the player hanging in the last frame?
     /// </summary>
     private bool wasHanging;
+
     /// <summary>
     /// Was the player jumping in the last frame?
     /// </summary>
@@ -258,10 +247,12 @@ public class CharacterAnimationController : MyMonoBehaviour
     /// Current speed (walk speed, jog speed,...)
     /// </summary>
     [HideInInspector] public float currentSpeed;
+
     /// <summary>
     /// Speed of the player when jogging
     /// </summary>
     [HideInInspector] public float jogSpeed;
+
     /// <summary>
     /// Speed of the player when walking
     /// </summary>
@@ -271,11 +262,11 @@ public class CharacterAnimationController : MyMonoBehaviour
     /// Is the player shimmying right?
     /// </summary>
     private bool _isShimmyRight;
+
     /// <summary>
     /// Is the player shimmying right?
     /// </summary>
-    public bool isShimmyRight
-    {
+    public bool isShimmyRight{
         get { return _isShimmyRight; }
         set
         {
@@ -283,10 +274,12 @@ public class CharacterAnimationController : MyMonoBehaviour
             _isShimmyRight = value;
         }
     }
+
     /// <summary>
     /// Was the player shimmying right in the last frame?
     /// </summary>
     private bool wasShimmyRight;
+
     /// <summary>
     /// Was the player shimmying left in the last frame?
     /// </summary>
@@ -296,6 +289,16 @@ public class CharacterAnimationController : MyMonoBehaviour
     /// Is the player shimmying left?
     /// </summary>
     private bool _isShimmyLeft;
+
+    public bool isStrafingLeft{
+        get { return GetBool(BOOL_IS_STRAFING_LEFT); }
+        set { SetBool(BOOL_IS_STRAFING_LEFT, value); }
+    }
+
+    public bool isStrafingRight{
+        get { return GetBool(BOOL_IS_STRAFING_RIGHT); }
+        set { SetBool(BOOL_IS_STRAFING_RIGHT, value); }
+    }
 
     /// <summary>
     /// Is the player shimmying left?
@@ -312,15 +315,12 @@ public class CharacterAnimationController : MyMonoBehaviour
     /// <summary>
     /// Returns the index of the current animator state
     /// </summary>
-    public int currentState
-    {
+    public int currentState{
         get
         {
-            for (var stateIndex = 0; stateIndex < STATES.Length; stateIndex++)
-            {
+            for (var stateIndex = 0; stateIndex < STATES.Length; stateIndex++) {
                 var stateName = STATES[stateIndex];
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName(stateName))
-                {
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName(stateName)) {
                     return stateIndex;
                 }
             }
@@ -332,18 +332,17 @@ public class CharacterAnimationController : MyMonoBehaviour
     /// <summary>
     /// A blend float where 0 = idle, 1 = walking, 2 = jog speed
     /// </summary>
-    private float idleWalkBlend
-    {
+    private float idleWalkBlend{
         get { return GetFloat(FLOAT_IDLE_WALK_BLEND); }
         set { SetFloat(FLOAT_IDLE_WALK_BLEND, value); }
     }
+
     /// <summary>
     /// A blend float where 0 = jumping from stand, 1 = jumping forward from jog
     /// </summary>
-    private float jumpBlend
-    {
+    private float jumpBlend{
         get { return GetFloat(FLOAT_JUMP_BLEND); }
-        set { SetFloat(FLOAT_JUMP_BLEND, value);}
+        set { SetFloat(FLOAT_JUMP_BLEND, value); }
     }
 
     /// <summary>
@@ -357,8 +356,7 @@ public class CharacterAnimationController : MyMonoBehaviour
     /// </summary>
     /// <param name="triggerIndex">Index of the trigger</param>
     /// <param name="setOrReset">True by default sets the trigger, false resets it</param>
-    private void Trigger(int triggerIndex, bool setOrReset = true)
-    {
+    private void Trigger(int triggerIndex, bool setOrReset = true){
         if (setOrReset)
             animator.SetTrigger(TRIGGERS[triggerIndex]);
         else
@@ -371,6 +369,7 @@ public class CharacterAnimationController : MyMonoBehaviour
     /// <param name="boolIndex">Index of the boolean</param>
     /// <returns>The value of the boolean in the animator parameters</returns>
     private bool GetBool(int boolIndex) => animator.GetBool(BOOLS[boolIndex]);
+
     /// <summary>
     /// Get the float parameter referred to by <paramref name="floatIndex"/>
     /// </summary>
@@ -384,6 +383,7 @@ public class CharacterAnimationController : MyMonoBehaviour
     /// <param name="boolIndex">Index of the boolean</param>
     /// <param name="value">New value of the boolean</param>
     private void SetBool(int boolIndex, bool value) => animator.SetBool(BOOLS[boolIndex], value);
+
     /// <summary>
     /// Sets the float referred to by <paramref name="floatIndex"/>
     /// </summary>
@@ -395,8 +395,7 @@ public class CharacterAnimationController : MyMonoBehaviour
         animator = GetComponent<Animator>();
     }
 
-    private void Start()
-    {
+    private void Start(){
 
 //        var bracedHangShimmyRightBehaviour = mAnimator.GetBehaviour<BracedHangShimmyRightBehaviour>();
 //        var bracedHangShimmyLeftBehaviour = mAnimator.GetBehaviour<BracedHangShimmyLeftBehaviours>();
@@ -412,8 +411,7 @@ public class CharacterAnimationController : MyMonoBehaviour
 //        };
     }
 
-    private void Update()
-    {
+    private void Update(){
         SetBlends();
         ProcessStateCases();
         SetLastFrameStates();
@@ -525,8 +523,7 @@ public class CharacterAnimationController : MyMonoBehaviour
     /// <summary>
     /// Keeps in memory this frame's state variables for the next frame
     /// </summary>
-    private void SetLastFrameStates()
-    {
+    private void SetLastFrameStates(){
 //        wasCrouching = isCrouching;
         wasJumping = isJumping;
         wasHanging = isHanging;
@@ -538,11 +535,7 @@ public class CharacterAnimationController : MyMonoBehaviour
     /// Gets called during IK pass
     /// </summary>
     /// <param name="layerIndex"></param>
-    private void OnAnimatorIK(int layerIndex)
-    {
-        if (isHanging)
-        {
-
-        }
+    private void OnAnimatorIK(int layerIndex){
+        if (isHanging) { }
     }
 }
