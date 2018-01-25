@@ -50,6 +50,7 @@ public class GizmosUtil : MyMonoBehaviour
 
 		Gizmos.DrawLine(from, to);
 		var direction = to - from;
+		if (direction == Vector3.zero) return;
 		var right = Quaternion.LookRotation(direction) * Quaternion.Euler(0,180+arrowAngle,0) * Vector3.forward;
 		var left = Quaternion.LookRotation(direction) * Quaternion.Euler(0,180-arrowAngle,0) * Vector3.forward;
 		var up = Quaternion.LookRotation(direction) * Quaternion.Euler(180 + arrowAngle,0,0) * Vector3.forward;

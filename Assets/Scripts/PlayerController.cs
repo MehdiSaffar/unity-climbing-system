@@ -242,6 +242,7 @@ public class PlayerController : MyMonoBehaviour{
 	private float timelapseShimmy;
 
 	private IKPositions ik;
+	private Vector3 cameraDesireVector;
 
 	private void Awake(){
 		animationController = GetComponent<CharacterAnimationController>();
@@ -286,11 +287,16 @@ public class PlayerController : MyMonoBehaviour{
 
 	// Update is called once per frame
 	private void FixedUpdate(){
-		closestClimbPoint = GetClosestPoint();
+//		closestClimbPoint = GetClosestPoint();
+		closestClimbPoint = null;
 		CheckIsGrounded();
 
 		// Sets the "keyPressed"...
 		GetInputState();
+
+		var mainCamera = Camera.main;
+		var cameraForward = mainCamera.transform.forward;
+		cameraDesireVector = Vector3.ProjectOnPlane(cameraForward, transform.up).normalized;
 
 		// Movement input vector
 		var inputVector = Vector3.zero;
@@ -544,6 +550,9 @@ public class PlayerController : MyMonoBehaviour{
 			Gizmos.color = Color.black;
 			Gizmos.DrawLine(transform.position, closestClimbPoint.transform.position);
 		}
+
+		Gizmos.color = Color.green;
+		GizmosUtil.DrawArrow(transform.position, transform.position + cameraDesireVector);
 	}
 
 	private void Shimmy(HangInfo.Direction direction){
@@ -689,26 +698,4 @@ public class PlayerController : MyMonoBehaviour{
 
 
 	}
-
-//	private void OnAnimatorMove()
-//	{
-//		if (_isHanging)
-//		{
-//			var neededPosition = Vector3.zero;
-//
-//			if (_hang.state == HangInfo.HangState.Midpoint)
-//			{
-//				neededPosition = Vector3.Lerp(
-//					_hang.currentPoint.characterRoot.transform.position,
-//					_hang.nextPoint.characterRoot.transform.position,
-//					0.5f);
-//			}
-//			else
-//			{
-//				neededPosition = _hang.currentPoint.characterRoot.transform.position;
-//			}
-//
-//			transform.position = Vector3.Slerp(transform.position, neededPosition, timeSinceShimmy / _animationDuration);
-//		}
-//	}
 }
