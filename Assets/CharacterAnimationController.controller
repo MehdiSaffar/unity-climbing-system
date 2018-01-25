@@ -80,7 +80,19 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
+  - m_Name: xVelocity
+    m_Type: 1
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 0}
   - m_Name: yVelocity
+    m_Type: 1
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 0}
+  - m_Name: zVelocity
     m_Type: 1
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -106,18 +118,6 @@ AnimatorController:
     m_Controller: {fileID: 0}
   - m_Name: isClimbing
     m_Type: 4
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 0}
-  - m_Name: velX
-    m_Type: 1
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 0}
-  - m_Name: velZ
-    m_Type: 1
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
@@ -239,10 +239,10 @@ BlendTree:
     m_DirectBlendParameter: distanceToGround
     m_Mirror: 0
   - serializedVersion: 2
-    m_Motion: {fileID: 7400000, guid: ef54bba2d43eaba438873a3f80855f53, type: 3}
+    m_Motion: {fileID: 7400000, guid: 7e2fca700a0549142b1743231abf5528, type: 3}
     m_Threshold: 2
     m_Position: {x: 0, y: -0.5}
-    m_TimeScale: -1
+    m_TimeScale: 1
     m_CycleOffset: 0
     m_DirectBlendParameter: distanceToGround
     m_Mirror: 0
@@ -295,25 +295,41 @@ BlendTree:
     m_DirectBlendParameter: distanceToGround
     m_Mirror: 1
   - serializedVersion: 2
-    m_Motion: {fileID: 7400000, guid: d4308d5b768dbf549871bfbe19fdbbd8, type: 3}
+    m_Motion: {fileID: 7400000, guid: aa5789ed2e6eaba4fbec63dac80a8a85, type: 3}
     m_Threshold: 9
     m_Position: {x: 1, y: -1}
-    m_TimeScale: -1
+    m_TimeScale: 1
+    m_CycleOffset: 0
+    m_DirectBlendParameter: distanceToGround
+    m_Mirror: 0
+  - serializedVersion: 2
+    m_Motion: {fileID: 7400000, guid: aa5789ed2e6eaba4fbec63dac80a8a85, type: 3}
+    m_Threshold: 10
+    m_Position: {x: -1, y: -1}
+    m_TimeScale: 1
     m_CycleOffset: 0.5
     m_DirectBlendParameter: distanceToGround
     m_Mirror: 1
   - serializedVersion: 2
-    m_Motion: {fileID: 7400000, guid: d4308d5b768dbf549871bfbe19fdbbd8, type: 3}
-    m_Threshold: 10
-    m_Position: {x: -1, y: -1}
-    m_TimeScale: -1
+    m_Motion: {fileID: 7400000, guid: a2fa4f8e5a69a134b8b2a2ff7f2f92a2, type: 3}
+    m_Threshold: 11
+    m_Position: {x: -0.5, y: 0}
+    m_TimeScale: 0.5
     m_CycleOffset: 0
     m_DirectBlendParameter: distanceToGround
     m_Mirror: 0
-  m_BlendParameter: velX
-  m_BlendParameterY: velZ
+  - serializedVersion: 2
+    m_Motion: {fileID: 7400000, guid: 1da3554b7ca7bd740b8c0d32924bc727, type: 3}
+    m_Threshold: 12
+    m_Position: {x: 0.5, y: 0}
+    m_TimeScale: 0.5
+    m_CycleOffset: 0
+    m_DirectBlendParameter: distanceToGround
+    m_Mirror: 0
+  m_BlendParameter: xVelocity
+  m_BlendParameterY: zVelocity
   m_MinThreshold: 0
-  m_MaxThreshold: 10
+  m_MaxThreshold: 12
   m_UseAutomaticThresholds: 0
   m_NormalizedBlendValues: 0
   m_BlendType: 2
@@ -446,7 +462,7 @@ BlendTree:
     m_CycleOffset: 0
     m_DirectBlendParameter: IdleWalkBlend
     m_Mirror: 0
-  m_BlendParameter: IdleWalkBlend
+  m_BlendParameter: forwardSpeed
   m_BlendParameterY: IdleWalkBlend
   m_MinThreshold: 0
   m_MaxThreshold: 1

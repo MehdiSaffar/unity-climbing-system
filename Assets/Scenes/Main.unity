@@ -438,7 +438,6 @@ MonoBehaviour:
   leftFoot: {fileID: 1532823999}
   pointDistanceThreshold: 100
   groundDistanceThreshold: 0.3
-  _isJumping: 0
   _isGrounded: 0
   _isCrouching: 0
   _isMidair: 0
@@ -446,6 +445,7 @@ MonoBehaviour:
   _isLandingFromJump: 0
   _isFalling: 0
   _isClimbing: 0
+  _isJumping: 0
   isStrafingRight: 0
   isStrafingLeft: 0
   _wasJumping: 0
@@ -457,14 +457,20 @@ MonoBehaviour:
   _wasClimbing: 0
   wasStrafingRight: 0
   wasStrafingLeft: 0
-  currentVelocityY: 0
+  strafeSpeed: 3
   walkSpeed: 1.55
   jogSpeed: 3
   jumpVelocityY: 5
+  currentVelocityY: 0
   fallVelocityThreshold: -4.5
-  shimmyAnimationDuration: 1.167
   showCameraDesireVectors: 1
-  strafeSpeed: 3
+  canJump: 0
+  canClimb: 0
+  canCrouch: 0
+  canWalk: 0
+  canJog: 0
+  canHang: 0
+  shimmyAnimationDuration: 1.167
 --- !u!114 &579009964
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -486,13 +492,13 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   animator: {fileID: 0}
+  localVelocity: {x: 0, y: 0, z: 0}
+  hangType: 0
   rightHandIK: {fileID: 0}
   leftHandIK: {fileID: 0}
-  isHanging: 0
-  hangType: 0
   jogSpeed: 0
   walkSpeed: 0
-  currentVelocity: {x: 0, y: 0, z: 0}
+  isHanging: 0
 --- !u!136 &579009965
 CapsuleCollider:
   m_ObjectHideFlags: 0
