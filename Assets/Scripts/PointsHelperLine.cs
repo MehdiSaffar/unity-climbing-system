@@ -46,6 +46,7 @@ public class PointsHelperLine : MyMonoBehaviour
 
 	private void Awake(){
 		placedPoints = new List<Point>();
+		update = false;
 	}
 
 	private void Update(){

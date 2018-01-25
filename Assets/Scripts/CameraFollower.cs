@@ -86,6 +86,10 @@ public class CameraFollower : MyMonoBehaviour
 	/// Has a maximum size of
 	/// </summary>
 	private Queue<Vector3> oldOffsets;
+
+	[SerializeField] private float horizontalShake;
+	[SerializeField] private float verticalShake;
+	[SerializeField] private float forwardShake;
 	#endregion
 
 	private void Awake(){
@@ -137,8 +141,14 @@ public class CameraFollower : MyMonoBehaviour
 		var desiredRotation = Quaternion.AngleAxis(deltaRoll, Vector3.up) * Quaternion.AngleAxis(deltaPitch, transform.right);
 		offset = desiredRotation * offset;
 		transform.position = target.position + offset;
+
 		transform.LookAt(target);
 		HandleOldOffsets();
+		var shakeOffset = new Vector3(
+			(Mathf.PerlinNoise(Time.realtimeSinceStartup, 0f) - 0.5f) * horizontalShake,
+			(Mathf.PerlinNoise(0f, Time.realtimeSinceStartup) - 0.5f) * verticalShake,
+			(Mathf.PerlinNoise(Time.realtimeSinceStartup, Time.realtimeSinceStartup) - 0.5f) * forwardShake);
+		transform.Translate(shakeOffset, Space.Self);
 	}
 
 	/// <summary>

@@ -434,7 +434,7 @@ public class PlayerController : MyMonoBehaviour{
 
 	private void FixedUpdate(){
 //		closestClimbPoint = GetClosestPoint();
-		closestClimbPoint = null;
+		GetClosestPoint();
 		// Check if the player is grounded or midair
 		CheckIsGrounded();
 
@@ -675,7 +675,8 @@ public class PlayerController : MyMonoBehaviour{
 			// Set the new rigidbody velocity
 			rb.velocity = worldVelocity;
 
-			if (!_isCrouching) {
+			if(_isHanging) {}
+			else if (!_isCrouching) {
 				// Make the character face the camera view
 				transform.rotation = Quaternion.LookRotation(cameraForwardDesireVector, Vector3.up);
 			}
@@ -694,13 +695,12 @@ public class PlayerController : MyMonoBehaviour{
 	}
 
 	/// <summary>
-	/// Returns the closest climbing point below the distance threshold
+	/// Gets the closest climbing point below the distance threshold
 	/// </summary>
-	/// <returns>Closest climbing point</returns>
-	private Point GetClosestPoint(){
+	private void GetClosestPoint(){
 		var points = pointList.GetComponentsInChildren<Point>();
 		float minimalSqrDistance = _pointSqrDistanceThreshold;
-		Point closestPoint = null;
+		closestClimbPoint = null;
 		foreach (var point in points) {
 			var displacement = point.transform.position - transform.position;
 			var direction = displacement.normalized;
@@ -711,11 +711,10 @@ public class PlayerController : MyMonoBehaviour{
 			var facingNormal = Vector3.Dot(transform.forward, -point.normal) >= 0.9f;
 			if (closeEnough && inFront && upEnough && facingNormal) {
 				minimalSqrDistance = sqrDistance;
-				closestPoint = point;
+				closestClimbPoint = point;
 			}
 		}
 
-		return closestPoint;
 	}
 
 	/// <summary>
@@ -830,7 +829,8 @@ public class PlayerController : MyMonoBehaviour{
 		SetLeftHand(_hang.currentPoint.ik.leftHand.transform);
 		SetRightHand(_hang.currentPoint.ik.rightHand.transform);
 		transform.position = _hang.currentPoint.characterRoot.transform.position;
-
+		transform.rotation = Quaternion.LookRotation(-_hang.currentPoint.normal, Vector3.up);
+//		transform.rotation.SetLookRotation(-_hang.currentPoint.normal, Vector3.up);
 	}
 
 	private void Unhang(){
@@ -864,7 +864,6 @@ public class PlayerController : MyMonoBehaviour{
 		// TODO: Handle IKs for other directions
 		switch (_hang.currentDirection) {
 			case HangInfo.Direction.Right:
-
 				controller.isShimmyRight = true;
 				break;
 			case HangInfo.Direction.Left:
@@ -889,7 +888,7 @@ public class PlayerController : MyMonoBehaviour{
 	/// </summary>
 	/// <param name="contact">Contact point</param>
 	private void CheckWallCollision(ContactPoint contact){
-		if (Mathf.Abs(Vector3.Dot(contact.normal, Vector3.up)) < 0.5f) {
+		if (Mathf.Abs(Vector3.Dot(contact.normal, Vector3.up)) < 0.5f && !_isHanging) {
 			isCollidingWithWall = true;
 			collisionNormal = contact.normal;
 			collisionPoint = contact.point;
@@ -953,6 +952,8 @@ public class PlayerController : MyMonoBehaviour{
 			}
 
 		}
+		controller.animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 0);
+		controller.animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 0);
 
 
 	}
