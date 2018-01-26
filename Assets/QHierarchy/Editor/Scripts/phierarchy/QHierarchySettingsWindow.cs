@@ -1,10 +1,9 @@
 using UnityEngine;
 using UnityEditor;
-using System.Collections;
+
 using System.Collections.Generic;
 using System.Text;
 using qtools.qhierarchy.pdata;
-using System;
 
 namespace qtools.qhierarchy.phierarchy
 {

@@ -1,9 +1,7 @@
 using UnityEngine;
-using UnityEditor;
-using System;
+
 using qtools.qhierarchy.pcomponent.pbase;
 using qtools.qhierarchy.pdata;
-using qtools.qhierarchy.phierarchy;
 
 namespace qtools.qhierarchy.pcomponent
 {

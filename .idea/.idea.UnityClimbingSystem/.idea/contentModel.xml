@@ -13,24 +13,13 @@
           <e p="DebugExtension.cs" t="Include" />
         </e>
         <e p="Editor" t="Include">
+          <e p="Climbing" t="Include">
+            <e p="LineHelperInspector.cs" t="Include" />
+          </e>
           <e p="Spline" t="Include">
             <e p="BezierCurveInspector.cs" t="Include" />
             <e p="BezierSplineInspector.cs" t="Include" />
             <e p="LineInspector.cs" t="Include" />
-          </e>
-        </e>
-        <e p="Plugins" t="Include">
-          <e p="Sirenix" t="Include">
-            <e p="Assemblies" t="Include">
-              <e p="link.xml" t="Include" />
-              <e p="Sirenix.OdinInspector.Attributes.xml" t="Include" />
-              <e p="Sirenix.OdinInspector.Editor.xml" t="Include" />
-              <e p="Sirenix.Serialization.Config.xml" t="Include" />
-              <e p="Sirenix.Serialization.xml" t="Include" />
-              <e p="Sirenix.Utilities.Editor.xml" t="Include" />
-              <e p="Sirenix.Utilities.xml" t="Include" />
-            </e>
-            <e p="Readme.txt" t="Include" />
           </e>
         </e>
         <e p="QHierarchy" t="Include">
@@ -81,18 +70,22 @@
           <e p="BracedHangShimmyRightBehaviour.cs" t="Include" />
           <e p="CameraFollower.cs" t="Include" />
           <e p="CharacterAnimationController.cs" t="Include" />
+          <e p="Climbing" t="Include">
+            <e p="HangInfo.cs" t="Include" />
+            <e p="MovementType.cs" t="Include" />
+            <e p="Neighbour.cs" t="Include" />
+            <e p="Point.cs" t="Include" />
+            <e p="PointsHelperLine.cs" t="Include" />
+            <e p="PointsManager.cs" t="Include" />
+          </e>
           <e p="GizmosUtil.cs" t="Include" />
-          <e p="HangInfo.cs" t="Include" />
-          <e p="IKPositions.cs" t="Include" />
-          <e p="IKTarget.cs" t="Include" />
-          <e p="MovementType.cs" t="Include" />
+          <e p="IK" t="Include">
+            <e p="IKPositions.cs" t="Include" />
+            <e p="IKTarget.cs" t="Include" />
+          </e>
           <e p="MyMonoBehaviour.cs" t="Include" />
           <e p="MyStateMachineBehaviour.cs" t="Include" />
-          <e p="Neighbour.cs" t="Include" />
           <e p="PlayerController.cs" t="Include" />
-          <e p="Point.cs" t="Include" />
-          <e p="PointsHelperLine.cs" t="Include" />
-          <e p="PointsManager.cs" t="Include" />
           <e p="SmoothMouseLook.cs" t="Include" />
           <e p="Spline" t="Include">
             <e p="BezierControlPointMode.cs" t="Include" />
@@ -100,16 +93,6 @@
             <e p="BezierSpline.cs" t="Include" />
             <e p="Line.cs" t="Include" />
             <e p="SplineWalker.cs" t="Include" />
-          </e>
-        </e>
-        <e p="Standard Assets" t="Include">
-          <e p="CrossPlatformInput" t="Include">
-            <e p="CrossPlatformInputGuidelines.txt" t="Include" />
-          </e>
-          <e p="Prototyping" t="Include">
-            <e p="Shaders" t="Include">
-              <e p="WorldCoordDiffuse.shader" t="Include" />
-            </e>
           </e>
         </e>
       </e>

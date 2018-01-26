@@ -6,7 +6,6 @@ using qtools.qhierarchy.pcomponent;
 using qtools.qhierarchy.pcomponent.pbase;
 using qtools.qhierarchy.pdata;
 using qtools.qhierarchy.phelper;
-using System.Reflection;
 
 namespace qtools.qhierarchy.phierarchy
 {

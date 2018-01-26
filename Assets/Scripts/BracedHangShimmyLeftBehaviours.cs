@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class BracedHangShimmyLeftBehaviours : MyStateMachineBehaviour {
+﻿public class BracedHangShimmyLeftBehaviours : MyStateMachineBehaviour {
 
 //	public event Action OnAnimationEnd;
 	// OnStateEnter is called when a transition starts and the state machine starts to evaluate this state

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 /// <summary>
 /// Follows the target's translational movements

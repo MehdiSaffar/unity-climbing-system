@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.InteropServices;
+
 using JetBrains.Annotations;
 using UnityEngine;
-using UnityEngine.Assertions;
-using UnityEngine.Experimental.UIElements;
-using UnityEngine.Rendering;
 
 /// <summary>
 /// Component used to control the player's character and keep track of its states
@@ -474,7 +471,7 @@ public class PlayerController : MyMonoBehaviour{
 
 		// Jump
 		if (_isJumping) {
-			if ((rb.velocity.y < -0.01 && _isGrounded) || (_isLandingFromJump)) {
+			if (rb.velocity.y < -0.01 && _isGrounded || _isLandingFromJump) {
 				Debug.Log("Stopped Jumping");
 				_isJumping = false;
 				_isFalling = false;

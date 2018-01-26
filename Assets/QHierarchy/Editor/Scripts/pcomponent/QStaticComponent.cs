@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using qtools.qhierarchy.pcomponent.pbase;
 using qtools.qhierarchy.pdata;
-using qtools.qhierarchy.phierarchy;
 
 namespace qtools.qhierarchy.pcomponent
 {

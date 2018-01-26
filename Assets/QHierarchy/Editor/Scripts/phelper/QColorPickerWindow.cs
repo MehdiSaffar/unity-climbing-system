@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEditor;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
+
 using qtools.qhierarchy.pdata;
 
 namespace qtools.qhierarchy.phelper
@@ -10,7 +8,7 @@ namespace qtools.qhierarchy.phelper
     public delegate void QColorSelectedHandler(GameObject[] gameObjects, Color color);
     public delegate void QColorRemovedHandler(GameObject[] gameObjects);
 
-    public class QColorPickerWindow: PopupWindowContent 
+    public class QColorPickerWindow: PopupWindowContent
     {
         // PRIVATE
         private GameObject[] gameObjects;
@@ -49,7 +47,7 @@ namespace qtools.qhierarchy.phelper
             GUI.DrawTexture(paletteRect, colorPaletteTexture);
 
             Vector2 mousePosition = Event.current.mousePosition;
-            if (Event.current.isMouse && Event.current.button == 0 && Event.current.type == EventType.mouseUp && paletteRect.Contains(mousePosition))
+            if (Event.current.isMouse && Event.current.button == 0 && Event.current.type == EventType.MouseUp && paletteRect.Contains(mousePosition))
             {
                 Event.current.Use();
                 if (mousePosition.x < 15 && mousePosition.y < 15)

@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class AxisGizmos : MonoBehaviour {
+public class AxisGizmos : MyMonoBehaviour {
 	private void OnDrawGizmos(){
 		Gizmos.color = Color.red;
 		GizmosUtil.DrawArrow(transform.position, transform.position + transform.right);

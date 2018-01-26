@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using UnityEngine.UI;
+
 using UnityEngine.Events;
-using UnityEngine.EventSystems;
+
 using qtools.qhierarchy.pcomponent.pbase;
-using qtools.qhierarchy.phierarchy;
-using qtools.qhierarchy.phelper;
 using qtools.qhierarchy.pdata;
 using System.Reflection;
 using System.Collections;
