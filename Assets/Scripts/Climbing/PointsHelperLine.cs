@@ -21,6 +21,9 @@ public class PointsHelperLine : MyMonoBehaviour
 	/// </summary>
 	[SerializeField] private Point pointPrefab;
 
+	/// <summary>
+	/// An array of the end points
+	/// </summary>
 	public Vector3[] points;
 
 	/// <summary>
@@ -34,6 +37,17 @@ public class PointsHelperLine : MyMonoBehaviour
 	[SerializeField] [Range(0.1f,3f)] private float intervalDistance;
 
 	[SerializeField] private List<Point> placedPoints;
+
+	[SerializeField] private Alignment alignment;
+
+	/// <summary>
+	/// Alignment of the points in the line
+	/// </summary>
+	public enum Alignment{
+		AlignToStart,
+		AlignToEnd,
+		AlignToMiddle
+	}
 
 	private void Awake(){
 		placedPoints = new List<Point>();
@@ -121,6 +135,13 @@ public class PointsHelperLine : MyMonoBehaviour
 	/// <returns>A line direction vector in the line's local space</returns>
 	public Vector3 GetDirectionVector(int startIndex = 0, int endIndex = 1) => GetLineVector(startIndex, endIndex).normalized;
 
+	/// <summary>
+	/// Sets the nth point's position (local space)
+	/// </summary>
+	/// <param name="index">Index of the point</param>
+	/// <param name="position">Position in local space</param>
+	/// <exception cref="ArgumentException">Index > 1 (TODO: Generalize this)
+	/// </exception>
 	public void SetPoint(int index, Vector3 position){
 		if(index > 1) throw new ArgumentException("Index > 1");
 		var oldLineVector = GetDirectionVector();
@@ -132,6 +153,10 @@ public class PointsHelperLine : MyMonoBehaviour
 
 	}
 
+	/// <summary>
+	/// Makes sure that the normal rotates when the end points are moved
+	/// </summary>
+	/// <param name="oldLine">Vector of the line before any change happened to it</param>
 	public void EnforceNormal(Vector3 oldLine){
 		var newLineVector = GetDirectionVector();
 		var cross = Vector3.Cross(oldLine, newLineVector);
@@ -144,15 +169,68 @@ public class PointsHelperLine : MyMonoBehaviour
 	/// <summary>
 	/// Returns the normal of the line
 	/// </summary>
-	public Vector3 GetNormal(){
-		return normal;
-	}
+	public Vector3 Normal => normal;
 
 	/// <summary>
 	/// Sets the normal of the line
 	/// </summary>
-	/// <param name="norm">Normal vector of the line</param>
-	public void SetNormal(Vector3 norm){
-		normal = norm;
+	/// <param name="normal">Normal vector of the line</param>
+	// ReSharper disable once ParameterHidesMember
+	public void SetNormal(Vector3 normal){
+		this.normal = normal;
+	}
+
+	/// <summary>
+	/// Returns the length of the line in the line's local space (unscaled)
+	/// </summary>
+	/// <value>Length of the line in the line's local space (unscaled)</value>
+	public float LineLength => GetLineVector().magnitude;
+
+	/// <summary>
+	/// Returns the nth climb point if it exists
+	/// </summary>
+	/// <param name="index">The nth point from start to end</param>
+	/// <returns>Position of the nth climb point in the line's local space</returns>
+	/// <exception cref="ArgumentOutOfRangeException">If index > climbPointCount - 1</exception>
+	public Vector3 GetClimbPointPosition(int index){
+		if(index > ClimbPointCount - 1)
+			throw new ArgumentOutOfRangeException($"index: {index}, last climb point's index: {ClimbPointCount - 1}");
+		return points[0] + GetDirectionVector() * (index * intervalDistance + AlignmentOffset);
+	}
+
+	/// <summary>
+	/// Gets the local space distance from start point required to satisfy the alignment of the points
+	/// </summary>
+	/// <value>Local space offset from start point</value>
+	private float AlignmentOffset{
+		get
+		{
+			var remainingDistance = LineLength - (ClimbPointCount - 1) * intervalDistance;
+			switch (alignment) {
+				case Alignment.AlignToStart:
+					return 0f;
+				case Alignment.AlignToEnd:
+					return remainingDistance;
+				case Alignment.AlignToMiddle:
+					return remainingDistance / 2f;
+				default:
+					throw new InvalidOperationException($"Alignment type '{alignment} not recognized/implemented");
+			}
+		}
+	}
+
+	/// <summary>
+	/// Count of climb points based on the required interval distance between each climb point
+	/// </summary>
+	/// <value>Climb point count</value>
+	public int ClimbPointCount => (int) (LineLength / intervalDistance);
+
+// TODO: Will probably change this
+	public ClimbPointType GetClimbPointType(int index){
+		return ClimbPointType.Hang;
+	}
+
+	public enum ClimbPointType{
+		Hang
 	}
 }
