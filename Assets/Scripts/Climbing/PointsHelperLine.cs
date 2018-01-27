@@ -9,7 +9,7 @@ using UnityEngine;
 /// <summary>
 /// Helper class to quickly set climb points along a line defined from <see cref="p0"/> to <see cref="p1"/>
 /// </summary>
-[ExecuteInEditMode]
+//[ExecuteInEditMode]
 public class PointsHelperLine : MyMonoBehaviour
 {
 	/// <summary>

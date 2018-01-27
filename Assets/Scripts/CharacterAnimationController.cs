@@ -275,13 +275,19 @@ public class CharacterAnimationController : MyMonoBehaviour{
         "isGrounded",
         "isCrouching",
         "isJumping",
-        "isClimbing"
+        "isClimbing",
+        "isHanging",
+        "isBracedHanging",
+        "isFreeHanging"
     };
 
     private const int BOOL_IS_GROUNDED = 0;
     private const int BOOL_IS_CROUCHING = 1;
     private const int BOOL_IS_JUMPING = 2;
     private const int BOOL_IS_CLIMBING = 3;
+    private const int BOOL_IS_HANGING = 4;
+    private const int BOOL_IS_BRACED_HANGING = 5;
+    private const int BOOL_IS_FREE_HANGING = 6;
     #endregion
 
     #region Floats
@@ -361,9 +367,21 @@ public class CharacterAnimationController : MyMonoBehaviour{
 
     #region Player Current States
     /// <summary>
-    ///     Is the player hanging on a ledge?
+    /// Is the player hanging on a ledge?
     /// </summary>
-    public bool isHanging;
+    private bool _isHanging;
+
+    /// </summary>
+    ///     Is the player hanging on a ledge?
+    /// <summary>
+    public bool isHanging{
+        get { return _isHanging; }
+        set
+        {
+            _isHanging = value;
+            SetBool(BOOL_IS_HANGING, _isHanging);
+        }
+    }
 
     /// <summary>
     ///     Is the player crouching?
@@ -464,6 +482,8 @@ public class CharacterAnimationController : MyMonoBehaviour{
             _isShimmyLeft = value;
         }
     }
+
+
     #endregion
 
     #region Player Previous States
@@ -486,5 +506,36 @@ public class CharacterAnimationController : MyMonoBehaviour{
     ///     Was the player shimmying left in the last frame?
     /// </summary>
     private bool wasShimmyLeft;
+
+    /// <summary>
+    /// Is the character free hanging?
+    /// </summary>
+    private bool _isFreeHanging;
+    /// <summary>
+    /// Is the character free hanging?
+    /// </summary>
+    public bool isFreeHanging{
+        get { return _isFreeHanging; }
+        set
+        {
+            _isFreeHanging = value;
+            SetBool(BOOL_IS_FREE_HANGING, _isFreeHanging);
+        }
+    }
+    /// <summary>
+    /// Is the character braced hanging?
+    /// </summary>
+    public bool _isBracedHanging;
+    /// <summary>
+    /// Is the character braced hanging?
+    /// </summary>
+    public bool isBracedHanging{
+        get { return _isFreeHanging; }
+        set
+        {
+            _isFreeHanging = value;
+            SetBool(BOOL_IS_BRACED_HANGING, _isFreeHanging);
+        }
+    }
     #endregion
 }

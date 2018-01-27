@@ -117,8 +117,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1538370745826696}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.19550881, y: -0.00015382346, z: -0.0000079795, w: 0.980702}
+  m_LocalPosition: {x: -0.03, y: 2.17, z: -2.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4722918436383216}
@@ -138,75 +138,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5a6286213717b9488202ad257528419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects:
-    - {fileID: 4178523930505562}
-    - {fileID: 4666223441015722}
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes:
-    - Name: ik
-      Entry: 7
-      Data: 0|IKPositions, Assembly-CSharp
-    - Name: head
-      Entry: 6
-      Data: 
-    - Name: rightHand
-      Entry: 7
-      Data: 1|IKTarget, Assembly-CSharp
-    - Name: transform
-      Entry: 10
-      Data: 0
-    - Name: weight
-      Entry: 4
-      Data: 1
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: leftHand
-      Entry: 7
-      Data: 2|IKTarget, Assembly-CSharp
-    - Name: transform
-      Entry: 10
-      Data: 1
-    - Name: weight
-      Entry: 4
-      Data: 1
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: hips
-      Entry: 6
-      Data: 
-    - Name: rightFoot
-      Entry: 6
-      Data: 
-    - Name: leftFoot
-      Entry: 6
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: neighbours
-      Entry: 7
-      Data: 3|System.Collections.Generic.List`1[[Neighbour, Assembly-CSharp]], mscorlib
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
   _pointsList: {fileID: 0}
   _isRoot: 0
   hangType: 0
   characterRoot: {fileID: 4722918436383216}
+  ik:
+    head:
+      transform: {fileID: 0}
+      weight: 0
+    rightHand:
+      transform: {fileID: 4178523930505562}
+      weight: 0
+    leftHand:
+      transform: {fileID: 4666223441015722}
+      weight: 0
+    hips:
+      transform: {fileID: 0}
+      weight: 0
+    rightFoot:
+      transform: {fileID: 0}
+      weight: 0
+    leftFoot:
+      transform: {fileID: 0}
+      weight: 0
   _discoverDistance: 1
   DirectionDotProductThresholdValue: 0.8
   _gizmoCubeSize: 0.1

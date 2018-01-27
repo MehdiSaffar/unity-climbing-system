@@ -116,7 +116,7 @@ public class LineHelperInspector : Editor{
 		if(EditorGUI.EndChangeCheck()) {
 			if (shouldSpawnClimbPoints) {
 				for (int i = 0; i < line.ClimbPointCount; i++) {
-					var spawnedPoint = GenerateClimbPoint(i);
+					var spawnedPoint = SpawnClimbPoint(i);
 					Undo.RecordObject(spawnedPoint, "Spawn climb points");
 					EditorUtility.SetDirty(spawnedPoint);
 				}
@@ -194,10 +194,11 @@ public class LineHelperInspector : Editor{
 	/// <summary>
 	/// Generates and keeps track of the climb point's gameobject
 	/// </summary>
-	private GameObject GenerateClimbPoint(int index) {
+	private GameObject SpawnClimbPoint(int index) {
 		var worldPos = handleTransform.TransformPoint(line.GetClimbPointPosition(index));
 		var gameobject = Instantiate(GetClimbPointGameObject(line.GetClimbPointType(index)));
-		gameobject.transform.SetParent(_pointsList);
+		gameobject.transform.SetParent(line.transform.parent);
+		gameobject.GetComponent<Point>()._pointsList = line.transform.parent;
 		gameobject.transform.position = worldPos;
 		gameobject.transform.rotation = Quaternion.LookRotation(normal);
 		return gameobject;

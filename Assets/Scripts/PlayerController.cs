@@ -36,7 +36,7 @@ public class PlayerController : MyMonoBehaviour{
 	/// Contains the information of the hang if the player is in climb mode
 	/// </summary>
 	[SerializeField]
-	private HangInfo _hang;
+	private HangInfo hang;
 
 	#region Gizmos Settings
 	/// <summary>
@@ -209,7 +209,7 @@ public class PlayerController : MyMonoBehaviour{
 	/// <summary>
 	/// Is the player hanging?
 	/// </summary>
-	public bool _isHanging;
+	public bool isHanging;
 
 	/// <summary>
 	/// Is the player landing from a jump?
@@ -418,7 +418,7 @@ public class PlayerController : MyMonoBehaviour{
 		controller = GetComponent<CharacterAnimationController>();
 		rb = GetComponent<Rigidbody>();
 		ik = new IKPositions();
-		_hang = new HangInfo();
+		hang = new HangInfo();
 
 	}
 
@@ -490,7 +490,7 @@ public class PlayerController : MyMonoBehaviour{
 		}
 
 		if (hangDown) {
-			if (_isHanging && _hang.state == HangInfo.HangState.Final) {
+			if (isHanging && hang.state == HangInfo.HangState.Final) {
 				Unhang();
 			}
 			else if (canHang) {
@@ -498,7 +498,7 @@ public class PlayerController : MyMonoBehaviour{
 			}
 		}
 
-		if (_isHanging) {
+		if (isHanging) {
 			if (rightDown) {
 				Shimmy(HangInfo.Direction.Right);
 			}
@@ -522,7 +522,7 @@ public class PlayerController : MyMonoBehaviour{
 		canWalk = /*_isGrounded && */!_isJumping;
 		canJog = /*_isGrounded && */!_isCrouching /* && !_isJumping*/;
 		canHang = _isGrounded && closestClimbPoint != null && !_isCrouching && !_isJumping;
-		canClimb = _isHanging;
+		canClimb = isHanging;
 		// If the point requires the player to be facing a certain way, then we add the condition
 		if (canHang && closestClimbPoint.HasNormal) {
 			canHang = Vector3.Dot(transform.forward, closestClimbPoint.normal) <= -0.9f;
@@ -627,7 +627,7 @@ public class PlayerController : MyMonoBehaviour{
 		var forward = (cameraForwardDesireVector * targetInputVector.y);
 		var right = (cameraRightDesireVector * targetInputVector.x);
 		float speed;
-		if (_isJumping || _isHanging || _isFalling || _isClimbing) {
+		if (_isJumping || isHanging || _isFalling || _isClimbing) {
 			// We keep the same speed as last time and the same forward
 			speed = lastSpeed;
 			forward = transform.forward;
@@ -648,7 +648,7 @@ public class PlayerController : MyMonoBehaviour{
 		}
 
 		// We can update the rigidbody's velocity when he is neither falling nor hanging/climbing
-		if (!_isHanging || !_isFalling) {
+		if (!isHanging || !_isFalling) {
 			var worldVelocity = (forward + right).normalized * speed;
 
 			worldVelocity.y = rb.velocity.y;
@@ -672,10 +672,11 @@ public class PlayerController : MyMonoBehaviour{
 			// Set the new rigidbody velocity
 			rb.velocity = worldVelocity;
 
-			if(_isHanging) {}
+			if(isHanging) {}
 			else if (!_isCrouching) {
 				// Make the character face the camera view
-				transform.rotation = Quaternion.LookRotation(cameraForwardDesireVector, Vector3.up);
+				if(inputVector != Vector3.zero)
+					transform.rotation = Quaternion.LookRotation(cameraForwardDesireVector, Vector3.up);
 			}
 			else {
 				// Because we do not have strafing animations, we will have to make the player face it's velocity
@@ -759,7 +760,9 @@ public class PlayerController : MyMonoBehaviour{
 		controller.isJumping = _isJumping;
 		controller.isCrouching = _isCrouching;
 		controller.isGrounded = _isGrounded;
-		controller.isHanging = _isHanging;
+		controller.isHanging = isHanging;
+		controller.isFreeHanging = isHanging && hang.currentPoint.hangType == Point.HangType.FreeHang;
+		controller.isBracedHanging = isHanging && hang.currentPoint.hangType == Point.HangType.BracedHang;
 		controller.isClimbing = _isClimbing;
 	}
 
@@ -770,7 +773,7 @@ public class PlayerController : MyMonoBehaviour{
 		_wasMidair = _isMidair;
 		_wasGrounded = _isGrounded;
 		_wasJumping = _isJumping;
-		_wasHanging = _isHanging;
+		_wasHanging = isHanging;
 		_wasCrouching = _isCrouching;
 		_wasFalling = _isFalling;
 		_wasClimbing = _isClimbing;
@@ -801,11 +804,11 @@ public class PlayerController : MyMonoBehaviour{
 
 	#region Climbing-related methods
 	private void Climb(){
-		_isHanging = false;
+		isHanging = false;
 		_isClimbing = true;
 		rb.isKinematic = true;
-		_hang.currentPoint = null;
-		_hang.currentDirection = HangInfo.Direction.None;
+		hang.currentPoint = null;
+		hang.currentDirection = HangInfo.Direction.None;
 	}
 
 	[UsedImplicitly]
@@ -816,50 +819,49 @@ public class PlayerController : MyMonoBehaviour{
 
 	private void Hang(Point point){
 		Debug.Log("Started Hanging");
-		_isHanging = true;
+		isHanging = true;
 		rb.isKinematic = true;
-		_hang.state = HangInfo.HangState.Final;
-		_hang.currentDirection = HangInfo.Direction.None;
-		_hang.currentPoint = point;
-		controller.hangType = _hang.currentPoint.hangType;
+		hang.state = HangInfo.HangState.Final;
+		hang.currentDirection = HangInfo.Direction.None;
+		hang.currentPoint = point;
+		controller.hangType = hang.currentPoint.hangType;
 
-		SetLeftHand(_hang.currentPoint.ik.leftHand.transform);
-		SetRightHand(_hang.currentPoint.ik.rightHand.transform);
-		transform.position = _hang.currentPoint.characterRoot.transform.position;
-		transform.rotation = Quaternion.LookRotation(-_hang.currentPoint.normal, Vector3.up);
-//		transform.rotation.SetLookRotation(-_hang.currentPoint.normal, Vector3.up);
+		SetLeftHand(hang.currentPoint.ik.leftHand.transform);
+		SetRightHand(hang.currentPoint.ik.rightHand.transform);
+		transform.position = hang.currentPoint.characterRoot.transform.position;
+		transform.rotation = Quaternion.LookRotation(-hang.currentPoint.normal, Vector3.up);
 	}
 
 	private void Unhang(){
 		Debug.Log("Stopped Hanging");
-		_isHanging = false;
+		isHanging = false;
 		_isFalling = true;
 		rb.isKinematic = false;
-		_hang.currentPoint = null;
-		_hang.currentDirection = HangInfo.Direction.None;
+		hang.currentPoint = null;
+		hang.currentDirection = HangInfo.Direction.None;
 	}
 
 	private void Shimmy(HangInfo.Direction direction){
 		if (direction == HangInfo.Direction.None) return;
 		Debug.Log("Shimmy " + direction + " entered");
-		Debug.Log("Current state is " + _hang.state);
-		if (_hang.state != HangInfo.HangState.Final) return;
+		Debug.Log("Current state is " + hang.state);
+		if (hang.state != HangInfo.HangState.Final) return;
 
 		// We obtain the next point depending on the direction intended to shimmy to
-		_hang.nextPoint = _hang.currentPoint.GetNextPoint(GetVectorFromDirection(direction));
+		hang.nextPoint = hang.currentPoint.GetNextPoint(GetVectorFromDirection(direction));
 		// If there is no point in that direction, simply return, nothing to do here
-		if (_hang.nextPoint == null) {
+		if (hang.nextPoint == null) {
 			Debug.Log("No point on the " + direction);
 			return;
 		}
 
 		// We keep the current shimmy direction in memory
-		_hang.currentDirection = direction;
+		hang.currentDirection = direction;
 		// We set the new state
-		_hang.state = HangInfo.HangState.Transition;
-		_hang.nextState = HangInfo.HangState.Final;
+		hang.state = HangInfo.HangState.Transition;
+		hang.nextState = HangInfo.HangState.Final;
 		// TODO: Handle IKs for other directions
-		switch (_hang.currentDirection) {
+		switch (hang.currentDirection) {
 			case HangInfo.Direction.Right:
 				controller.isShimmyRight = true;
 				break;
@@ -869,8 +871,8 @@ public class PlayerController : MyMonoBehaviour{
 			default:
 				throw new ArgumentOutOfRangeException();
 		}
-		SetRightHand(_hang.nextPoint.ik.rightHand.transform, 0);
-		SetLeftHand(_hang.nextPoint.ik.leftHand.transform, 0);
+		SetRightHand(hang.nextPoint.ik.rightHand.transform, 0);
+		SetLeftHand(hang.nextPoint.ik.leftHand.transform, 0);
 
 	}
 	#endregion
@@ -885,7 +887,7 @@ public class PlayerController : MyMonoBehaviour{
 	/// </summary>
 	/// <param name="contact">Contact point</param>
 	private void CheckWallCollision(ContactPoint contact){
-		if (Mathf.Abs(Vector3.Dot(contact.normal, Vector3.up)) < 0.5f && !_isHanging) {
+		if (Mathf.Abs(Vector3.Dot(contact.normal, Vector3.up)) < 0.5f && !isHanging) {
 			isCollidingWithWall = true;
 			collisionNormal = contact.normal;
 			collisionPoint = contact.point;
@@ -904,7 +906,7 @@ public class PlayerController : MyMonoBehaviour{
 	}
 
 	private void OnAnimatorIK(int layerIndex){
-		if (_isHanging) {
+		if (isHanging) {
 			// Set right hand's IK
 			controller.animator.SetIKPositionWeight(AvatarIKGoal.RightHand, ik.rightHand.weight);
 			controller.animator.SetIKPosition(AvatarIKGoal.RightHand, ik.rightHand.transform.position);
@@ -912,12 +914,12 @@ public class PlayerController : MyMonoBehaviour{
 			controller.animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, ik.leftHand.weight);
 			controller.animator.SetIKPosition(AvatarIKGoal.LeftHand, ik.leftHand.transform.position);
 		}
-		if (_isHanging && _hang.state == HangInfo.HangState.Transition) {
+		if (isHanging && hang.state == HangInfo.HangState.Transition) {
 			var percentage = timelapseShimmy / shimmyAnimationDuration;
 			timelapseShimmy += Time.fixedDeltaTime;
 			if (percentage > 0.999) {
 
-				switch (_hang.currentDirection) {
+				switch (hang.currentDirection) {
 					case HangInfo.Direction.Left:
 						controller.isShimmyLeft = false;
 						break;
@@ -925,18 +927,18 @@ public class PlayerController : MyMonoBehaviour{
 						controller.isShimmyRight = false;
 						break;
 				}
-				_hang.currentPoint = _hang.nextPoint;
-				SetRightHand(_hang.currentPoint.ik.rightHand.transform);
-				SetLeftHand(_hang.currentPoint.ik.leftHand.transform);
-				_hang.currentDirection = HangInfo.Direction.None;
-				_hang.nextPoint = null;
-				_hang.state = HangInfo.HangState.Final;
-				_hang.nextState = HangInfo.HangState.Final;
+				hang.currentPoint = hang.nextPoint;
+				SetRightHand(hang.currentPoint.ik.rightHand.transform);
+				SetLeftHand(hang.currentPoint.ik.leftHand.transform);
+				hang.currentDirection = HangInfo.Direction.None;
+				hang.nextPoint = null;
+				hang.state = HangInfo.HangState.Final;
+				hang.nextState = HangInfo.HangState.Final;
 				timelapseShimmy = 0;
 			}
 			else if(percentage > 0.9) {
-			transform.position = Vector3.Lerp(_hang.currentPoint.characterRoot.transform.position,
-				_hang.nextPoint.characterRoot.transform.position,
+			transform.position = Vector3.Lerp(hang.currentPoint.characterRoot.transform.position,
+				hang.nextPoint.characterRoot.transform.position,
 				percentage);
 
 			}

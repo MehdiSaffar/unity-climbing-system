@@ -1,6 +1,9 @@
-﻿/// <summary>
+﻿using System;
+
+/// <summary>
 /// Description of the IK positions of the various body parts of a human
 /// </summary>
+[Serializable]
 public class IKPositions {
     /// <summary>
     /// Target IK for the head

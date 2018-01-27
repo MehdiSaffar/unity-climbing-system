@@ -1,8 +1,11 @@
-﻿using UnityEngine;
+﻿using System;
+
+using UnityEngine;
 
 /// <summary>
 /// Description of a target IK transform
 /// </summary>
+[Serializable]
 public class IKTarget {
     /// <summary>
     /// Target transform
