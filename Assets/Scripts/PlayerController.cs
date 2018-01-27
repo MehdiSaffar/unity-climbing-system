@@ -419,7 +419,6 @@ public class PlayerController : MyMonoBehaviour{
 		rb = GetComponent<Rigidbody>();
 		ik = new IKPositions();
 		hang = new HangInfo();
-
 	}
 
 	private void Start(){
@@ -467,11 +466,12 @@ public class PlayerController : MyMonoBehaviour{
 
 		if (_isGrounded) {
 			_isFalling = false;
+//			_isLandingFromJump = false;
 		}
 
 		// Jump
 		if (_isJumping) {
-			if (rb.velocity.y < -0.01 && _isGrounded || _isLandingFromJump) {
+			if ((rb.velocity.y < -0.01 && !_wasGrounded && _isGrounded )|| _isLandingFromJump) {
 				Debug.Log("Stopped Jumping");
 				_isJumping = false;
 				_isFalling = false;
@@ -519,7 +519,7 @@ public class PlayerController : MyMonoBehaviour{
 	private void CheckAbilities(){
 		canJump = !_isJumping && _isGrounded && !_isCrouching;
 		canCrouch = _isGrounded;
-		canWalk = /*_isGrounded && */!_isJumping;
+		canWalk = _isGrounded && !_isJumping;
 		canJog = /*_isGrounded && */!_isCrouching /* && !_isJumping*/;
 		canHang = _isGrounded && closestClimbPoint != null && !_isCrouching && !_isJumping;
 		canClimb = isHanging;
@@ -627,10 +627,10 @@ public class PlayerController : MyMonoBehaviour{
 		var forward = (cameraForwardDesireVector * targetInputVector.y);
 		var right = (cameraRightDesireVector * targetInputVector.x);
 		float speed;
-		if (_isJumping || isHanging || _isFalling || _isClimbing) {
+		if (_isJumping || _isFalling || _isClimbing) {
 			// We keep the same speed as last time and the same forward
 			speed = lastSpeed;
-			forward = transform.forward;
+			forward = Vector3.ProjectOnPlane(rb.velocity, Vector3.up);
 		}
 		else {
 			if (_isCrouching && canWalk) {
@@ -792,8 +792,9 @@ public class PlayerController : MyMonoBehaviour{
 	public void OnActualJumpLand(AnimationEvent animationEvent){
 		// TODO: Might require checking if we are actually grounded and not in midair
 		// as the jump might take very long
-		rb.velocity = Vector3.zero;
-		_isLandingFromJump = true;
+//		rb.velocity = Vector3.zero;
+//		_isLandingFromJump = true;
+		Debug.LogError("DUUUUUUUUUUUUUUUUUUUUUUUUUUUUDE");
 	}
 
 	[UsedImplicitly]

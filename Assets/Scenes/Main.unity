@@ -1368,7 +1368,7 @@ MonoBehaviour:
   collisionNormalColor: {r: 1, g: 1, b: 0, a: 1}
   rightRayLength: 1
   forwardRayLength: 1
-  downRayLength: 1.2
+  downRayLength: 2.5
   rightFoot: {fileID: 168851166}
   leftFoot: {fileID: 1532823999}
   pointDistanceThreshold: 100
@@ -1402,7 +1402,7 @@ MonoBehaviour:
   jogSpeed: 3
   jumpVelocityY: 5
   currentVelocityY: 0
-  fallVelocityThreshold: -4.5
+  fallVelocityThreshold: -0.5
   shimmyAnimationDuration: 1.167
   targetInputVector: {x: 0, y: 0, z: 0}
   lerpSpeed: 0.2
