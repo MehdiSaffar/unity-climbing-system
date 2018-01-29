@@ -282,7 +282,7 @@ BlendTree:
     m_CycleOffset: 0
     m_DirectBlendParameter: IdleWalkBlend
     m_Mirror: 0
-  m_BlendParameter: JumpBlend
+  m_BlendParameter: forwardSpeed
   m_BlendParameterY: IdleWalkBlend
   m_MinThreshold: 0
   m_MaxThreshold: 1
@@ -579,9 +579,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.45892954
+  m_TransitionDuration: 0.9829495
   m_TransitionOffset: 0
-  m_ExitTime: 0.74999994
+  m_ExitTime: 0.4792937
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -1032,7 +1032,7 @@ AnimatorStateTransition:
   m_TransitionDuration: 0.25
   m_TransitionOffset: 0
   m_ExitTime: 0.8481308
-  m_HasExitTime: 1
+  m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
   m_OrderedInterruption: 1

@@ -40,6 +40,11 @@ public class Point : MyMonoBehaviour{
 	public Transform characterRoot;
 
 	/// <summary>
+	/// Position where the character's root transform should be if he climbs off
+	/// </summary>
+	public Transform dismountPoint;
+
+	/// <summary>
 	/// Contains the position rotation targets of the character's body parts
 	/// </summary>
 	public IKPositions ik;

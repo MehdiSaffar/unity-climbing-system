@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 
 using JetBrains.Annotations;
 using UnityEngine;
@@ -199,7 +200,7 @@ public class PlayerController : MyMonoBehaviour{
 	/// <summary>
 	/// Is the player crouching?
 	/// </summary>
-	public bool _isCrouching;
+	public bool isCrouching;
 
 	/// <summary>
 	/// Is the player midair?
@@ -219,17 +220,17 @@ public class PlayerController : MyMonoBehaviour{
 	/// <summary>
 	/// Is the player falling?
 	/// </summary>
-	public bool _isFalling;
+	public bool isFalling;
 
 	/// <summary>
 	/// Is the player climbing?
 	/// </summary>
-	public bool _isClimbing;
+	public bool isClimbing;
 
 	/// <summary>
 	/// Is the player jumping?
 	/// </summary>
-	[Header("States")] public bool _isJumping;
+	[Header("States")] public bool isJumping;
 
 	/// <summary>
 	/// Is the character strafing right?
@@ -331,7 +332,7 @@ public class PlayerController : MyMonoBehaviour{
 	/// <summary>
 	/// Is the player able to input?
 	/// </summary>
-	private bool IsInputLocked => _isJumping || _isFalling;
+	private bool IsInputLocked => isJumping || isFalling;
 
 	/// <summary>
 	/// Is the spacebar pressed up?
@@ -385,8 +386,8 @@ public class PlayerController : MyMonoBehaviour{
 	#endregion
 
 	#region Camera
-	private Vector3 cameraForwardDesireVector;
-	private Vector3 cameraRightDesireVector;
+	private Vector3 cameraForward;
+	private Vector3 cameraRight;
 	#endregion
 
 	/// <summary>
@@ -413,6 +414,7 @@ public class PlayerController : MyMonoBehaviour{
 
 	[SerializeField] private Vector3 targetInputVector;
 	[SerializeField] private float lerpSpeed;
+	private Vector3 lastXzPlaneDirection;
 
 	private void Awake(){
 		controller = GetComponent<CharacterAnimationController>();
@@ -459,34 +461,34 @@ public class PlayerController : MyMonoBehaviour{
 	/// based on the input and current abilities
 	/// </summary>
 	private void CheckStateChanges(){
-		if (!_isFalling && !_isGrounded && rb.velocity.y < fallVelocityThreshold) {
+		if (!isFalling && !_isGrounded && rb.velocity.y < fallVelocityThreshold) {
 			Debug.Log("Falling!!");
-			_isFalling = true;
+			isFalling = true;
 		}
 
 		if (_isGrounded) {
-			_isFalling = false;
+			isFalling = false;
 //			_isLandingFromJump = false;
 		}
 
 		// Jump
-		if (_isJumping) {
+		if (isJumping) {
 			if ((rb.velocity.y < -0.01 && !_wasGrounded && _isGrounded )|| _isLandingFromJump) {
 				Debug.Log("Stopped Jumping");
-				_isJumping = false;
-				_isFalling = false;
+				isJumping = false;
+				isFalling = false;
 			}
 		}
 		else {
 			if (canJump && spaceDown) {
-				_isJumping = true;
+				isJumping = true;
 				Debug.Log("Started Jumping");
 			}
 		}
 
 		if (crouchDown && canCrouch) {
-			_isCrouching = !_isCrouching;
-			Debug.Log(_isCrouching ? "Started Crouching" : "Stopped Crouching");
+			isCrouching = !isCrouching;
+			Debug.Log(isCrouching ? "Started Crouching" : "Stopped Crouching");
 		}
 
 		if (hangDown) {
@@ -508,7 +510,7 @@ public class PlayerController : MyMonoBehaviour{
 			}
 
 			if (spaceDown && canClimb) {
-				Climb();
+				Dismount();
 			}
 		}
 	}
@@ -517,11 +519,11 @@ public class PlayerController : MyMonoBehaviour{
 	/// Checks the abilities of the player for the current frame
 	/// </summary>
 	private void CheckAbilities(){
-		canJump = !_isJumping && _isGrounded && !_isCrouching;
+		canJump = !isJumping && _isGrounded && !isCrouching;
 		canCrouch = _isGrounded;
-		canWalk = _isGrounded && !_isJumping;
-		canJog = /*_isGrounded && */!_isCrouching /* && !_isJumping*/;
-		canHang = _isGrounded && closestClimbPoint != null && !_isCrouching && !_isJumping;
+		canWalk = _isGrounded && !isJumping;
+		canJog = /*_isGrounded && */!isCrouching /* && !_isJumping*/;
+		canHang = _isGrounded && closestClimbPoint != null && !isCrouching && !isJumping;
 		canClimb = isHanging;
 		// If the point requires the player to be facing a certain way, then we add the condition
 		if (canHang && closestClimbPoint.HasNormal) {
@@ -582,12 +584,12 @@ public class PlayerController : MyMonoBehaviour{
 		var mainCamera = Camera.main;
 		var cameraForward = mainCamera.transform.forward;
 		var cameraRight = mainCamera.transform.right;
-			cameraForwardDesireVector = Vector3.Slerp(
-				cameraForwardDesireVector,
+			this.cameraForward = Vector3.Slerp(
+				this.cameraForward,
 				Vector3.ProjectOnPlane(cameraForward, transform.up).normalized,
 				lerpSpeed);
-		cameraRightDesireVector = Vector3.Slerp(
-			cameraRightDesireVector,
+		this.cameraRight = Vector3.Slerp(
+			this.cameraRight,
 			Vector3.ProjectOnPlane(cameraRight, transform.up).normalized,
 			lerpSpeed);
 	}
@@ -620,76 +622,156 @@ public class PlayerController : MyMonoBehaviour{
 	/// <param name="canJog">Can the player jog?</param>
 	/// TODO: Requires refactoring of the parameters
 	private void UpdateTransform(){
+		// We smooth out the direction of the input vector
+		// based on the last frame's input vector
+		// but we only smooth out when currently the user gave a movement input
+		// otherwise the user will slide after the user stopped pressing
 		targetInputVector = inputVector == Vector3.zero
 			? inputVector
 			: Vector3.Slerp(targetInputVector, inputVector, lerpSpeed);
-//		targetInputVector = inputVector;
-		var forward = (cameraForwardDesireVector * targetInputVector.y);
-		var right = (cameraRightDesireVector * targetInputVector.x);
-		float speed;
-		if (_isJumping || _isFalling || _isClimbing) {
-			// We keep the same speed as last time and the same forward
-			speed = lastSpeed;
-			forward = Vector3.ProjectOnPlane(rb.velocity, Vector3.up);
-		}
-		else {
-			if (_isCrouching && canWalk) {
+//		targetInputVector = Vector3.Slerp(targetInputVector, inputVector, lerpSpeed);
+
+		// If the player were to move forward, he would move forward along the camera's forward
+		// vector, not along the character's forward. That way the player, when moving, will always
+		// give its back to the camera go where the user is looking
+		// Same thing for the right vector as it follows the forward by a 90 degree angle
+		var forward = cameraForward * targetInputVector.y;
+		var right = cameraRight * targetInputVector.x;
+
+		//float speed;
+		//if (_isJumping || _isFalling) {
+		//	// We keep the same speed as last time and the same forward
+		//	speed = lastSpeed;
+//		//	forward = Vector3.ProjectOnPlane(rb.velocity, Vector3.up);
+		//}
+		//else {
+		//	if (_isCrouching) {
+		//		speed = walkSpeed;
+		//	}
+		//	else if (shiftPressed && canWalk) {
+		//		speed = walkSpeed;
+		//	}
+		//	else if (!shiftPressed && canJog) {
+		//		speed = jogSpeed;
+		//	}
+		//	else {
+		//		speed = 0f;
+		//	}
+		//}
+
+		// The velocity should not be updated in these cases
+		var ignoreVelocityUpdate = isHanging || isClimbing;
+
+		if (!ignoreVelocityUpdate) {
+			float speed = jogSpeed;
+			if (isJumping || isFalling) {
+				speed = lastSpeed;
+			}
+			if (shiftPressed && canWalk) {
 				speed = walkSpeed;
 			}
-			else if (shiftPressed && canWalk) {
+			else if(isCrouching) {
 				speed = walkSpeed;
 			}
-			else if (!shiftPressed && canJog) {
-				speed = jogSpeed;
+			lastSpeed = speed;
+			var xzPlaneDirection = (forward + right).normalized;
+			if (isJumping || isFalling) {
+				xzPlaneDirection = lastXzPlaneDirection;
+			}
+			lastXzPlaneDirection = xzPlaneDirection;
+//			if (isJumping || isFalling) {
+//				xzPlaneDirection = transform.forward;
+//			}
+			// Set the new XZ plane velocity
+			var newVelocity = xzPlaneDirection * speed;
+			// Preserve vertical velocity
+			newVelocity.y = rb.velocity.y;
+
+			// Make sure the player slides against walls instead of getting stuck
+			// TODO: Maybe apply this whether velocity gets manually updated or not
+			if (isCollidingWithWall && Vector3.Dot(newVelocity, collisionNormal) < 0f) {
+				newVelocity = Vector3.ProjectOnPlane(newVelocity, collisionNormal);
+			}
+
+			// Update the rigidbody's velocity
+			rb.velocity = newVelocity;
+
+			// We let the controller know of our local velocity
+			// What I mean by local velocity means the x is always the right/left axis of the player
+			// the z is always the forward/backward of the player
+			controller.localVelocity.y = rb.velocity.y;
+			if (isCrouching || isJumping) {
+				controller.localVelocity.x = 0;
+				controller.localVelocity.z = xzPlaneDirection.magnitude * speed;
 			}
 			else {
-				speed = 0f;
-			}
-		}
-
-		// We can update the rigidbody's velocity when he is neither falling nor hanging/climbing
-		if (!isHanging || !_isFalling) {
-			var worldVelocity = (forward + right).normalized * speed;
-
-			worldVelocity.y = rb.velocity.y;
-
-			if (isCollidingWithWall && Vector3.Dot(worldVelocity, collisionNormal) < 0f) {
-				worldVelocity = Vector3.ProjectOnPlane(worldVelocity, collisionNormal);
-			}
-
-
-			// We let the animation controller know about the character's current velocity
-			// relative to it's forward...
-			if (_isCrouching) {
-				controller.localVelocity.z = targetInputVector == Vector3.zero ? 0 : speed;
-			}
-			else {
+				controller.localVelocity.x = targetInputVector.x * speed;
 				controller.localVelocity.z = targetInputVector.y * speed;
 			}
-			controller.localVelocity.x = targetInputVector.x * speed;
-			controller.localVelocity.y = worldVelocity.y;
 
-			// Set the new rigidbody velocity
-			rb.velocity = worldVelocity;
 
-			if(isHanging) {}
-			else if (!_isCrouching) {
-				// Make the character face the camera view
-				if(inputVector != Vector3.zero)
-					transform.rotation = Quaternion.LookRotation(cameraForwardDesireVector, Vector3.up);
+			// Now comes the part where we handle the character's orientation
+			if (isCrouching || isJumping || isFalling) {
+				// Because we do not have crouch strafing animations, we will make the player face
+				// his velocity vector, not the camera's forward
+				if(xzPlaneDirection != Vector3.zero)
+					transform.rotation = Quaternion.LookRotation(xzPlaneDirection, Vector3.up);
 			}
 			else {
-				// Because we do not have strafing animations, we will have to make the player face it's velocity
-				// and not the camera
-				if(worldVelocity != Vector3.zero)
-					transform.rotation = Quaternion.LookRotation(worldVelocity, Vector3.up);
+				// If the player is not crouching, so walking, strafing..
+				// Then we have the body of the player facing the camera's forward so that he can strafe
+				// walk back without facing us etc..
+				// We only make him face forward when inputVector is not Vector3.zero
+				// so that we can turn the camera around the player without him constantly giving
+				// his back to us
+				if(inputVector != Vector3.zero)
+					transform.rotation = Quaternion.LookRotation(cameraForward, Vector3.up);
 			}
-
 		}
-		currentVelocityY = rb.velocity.y;
+		else {
+			Debug.Log("NOT UPDATING");
+		}
+		// We can update the rigidbody's velocity when he is neither falling nor hanging/climbing
+//		if (!isHanging) {
+//			var worldVelocity = (forward + right).normalized * speed;
+//
+//			worldVelocity.y = rb.velocity.y;
+//
+//			if (isCollidingWithWall && Vector3.Dot(worldVelocity, collisionNormal) < 0f) {
+//				worldVelocity = Vector3.ProjectOnPlane(worldVelocity, collisionNormal);
+//			}
+//
+//
+//			// We let the animation controller know about the character's current velocity
+//			// relative to it's forward...
+//			if (isCrouching) {
+//				controller.localVelocity.z = targetInputVector == Vector3.zero ? 0 : speed;
+//			}
+//			else {
+//				controller.localVelocity.z = targetInputVector.y * speed;
+//			}
+//			controller.localVelocity.x = targetInputVector.x * speed;
+//			controller.localVelocity.y = worldVelocity.y;
+//
+//			// Set the new rigidbody velocity
+//			rb.velocity = worldVelocity;
+//
+//			if(isHanging) {}
+//			else if (!isCrouching) {
+//				// Make the character face the camera view
+//				if(inputVector != Vector3.zero)
+//					transform.rotation = Quaternion.LookRotation(cameraForward, Vector3.up);
+//			}
+//			else {
+//				// Because we do not have strafing animations, we will have to make the player face it's velocity
+//				// and not the camera
+//				if(worldVelocity != Vector3.zero)
+//					transform.rotation = Quaternion.LookRotation(worldVelocity, Vector3.up);
+//			}
+//		}
+//		currentVelocityY = rb.velocity.y;
 
 		// We keep the current speed in memory for next frame
-		lastSpeed = speed;
 	}
 
 	/// <summary>
@@ -756,14 +838,14 @@ public class PlayerController : MyMonoBehaviour{
 	/// </summary>
 	private void SetAnimationControllerStates(){
 //		controller.localVelocity = rb.velocity;
-		controller.isFalling = _isFalling;
-		controller.isJumping = _isJumping;
-		controller.isCrouching = _isCrouching;
+		controller.isFalling = isFalling;
+		controller.isJumping = isJumping;
+		controller.isCrouching = isCrouching;
 		controller.isGrounded = _isGrounded;
 		controller.isHanging = isHanging;
 		controller.isFreeHanging = isHanging && hang.currentPoint.hangType == Point.HangType.FreeHang;
 		controller.isBracedHanging = isHanging && hang.currentPoint.hangType == Point.HangType.BracedHang;
-		controller.isClimbing = _isClimbing;
+		controller.isClimbing = isClimbing;
 	}
 
 	/// <summary>
@@ -772,11 +854,11 @@ public class PlayerController : MyMonoBehaviour{
 	private void SetLastFrameStates(){
 		_wasMidair = _isMidair;
 		_wasGrounded = _isGrounded;
-		_wasJumping = _isJumping;
+		_wasJumping = isJumping;
 		_wasHanging = isHanging;
-		_wasCrouching = _isCrouching;
-		_wasFalling = _isFalling;
-		_wasClimbing = _isClimbing;
+		_wasCrouching = isCrouching;
+		_wasFalling = isFalling;
+		_wasClimbing = isClimbing;
 	}
 
 	#region Jumping-related methods
@@ -794,7 +876,6 @@ public class PlayerController : MyMonoBehaviour{
 		// as the jump might take very long
 //		rb.velocity = Vector3.zero;
 //		_isLandingFromJump = true;
-		Debug.LogError("DUUUUUUUUUUUUUUUUUUUUUUUUUUUUDE");
 	}
 
 	[UsedImplicitly]
@@ -804,9 +885,9 @@ public class PlayerController : MyMonoBehaviour{
 	#endregion
 
 	#region Climbing-related methods
-	private void Climb(){
+	private void Dismount(){
 		isHanging = false;
-		_isClimbing = true;
+		isClimbing = true;
 		rb.isKinematic = true;
 		hang.currentPoint = null;
 		hang.currentDirection = HangInfo.Direction.None;
@@ -814,7 +895,7 @@ public class PlayerController : MyMonoBehaviour{
 
 	[UsedImplicitly]
 	public void OnFinishClimb(AnimationEvent animationEvent){
-		_isClimbing = false;
+		isClimbing = false;
 		rb.isKinematic = false;
 	}
 
@@ -836,7 +917,7 @@ public class PlayerController : MyMonoBehaviour{
 	private void Unhang(){
 		Debug.Log("Stopped Hanging");
 		isHanging = false;
-		_isFalling = true;
+		isFalling = true;
 		rb.isKinematic = false;
 		hang.currentPoint = null;
 		hang.currentDirection = HangInfo.Direction.None;
@@ -975,8 +1056,8 @@ public class PlayerController : MyMonoBehaviour{
 		}
 		if (showCameraDesireVectors) {
 			Gizmos.color = cameraDesireVectorColor;
-			GizmosUtil.DrawArrow(transform.position, transform.position + cameraForwardDesireVector);
-			GizmosUtil.DrawArrow(transform.position, transform.position + cameraRightDesireVector);
+			GizmosUtil.DrawArrow(transform.position, transform.position + cameraForward);
+			GizmosUtil.DrawArrow(transform.position, transform.position + cameraRight);
 
 		}
 		if (showVelocityVector) {

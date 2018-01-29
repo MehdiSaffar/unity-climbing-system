@@ -134,6 +134,7 @@ public class CharacterAnimationController : MyMonoBehaviour{
 
         // Set the forward speed (for crouching)
         forwardSpeedBlend = Mathf.Abs(localVelocity.z / walkSpeed);
+
     }
 
     /// <summary>
